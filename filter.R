@@ -2,6 +2,7 @@ library("dplyr")
 library("stringr")
 library("plyr")
 library("data.table")
+library(hash)
 
 dataset <- read.table(
   "data/apartments.csv",
@@ -86,206 +87,176 @@ north <- "NORTH"
 south <- "SOUTH"
 east <- "EAST"
 west <- "WEST"
-north_east <- "NORTH_EAST"
-south_east <- "SOUTH_EAST"
-north_west <- "NORTH_WEST"
-south_west <- "SOUTH_WEST"
 
 street <- "STREET"
-unknown <- "UNKNOWN"
 
-dataset$view_in_window <- as.character(dataset$view_in_window)
+views_in_window_conditions <- hash()
 
-replace_by_reg <- function(vector, reg, value) {
-  return(if_else(
-    str_detect(vector, regex(reg, ignore_case = TRUE)),
-    value,
-    vector
-  ))
+views_in_window_conditions[[north]] <- function(detect) {
+  detect("север")
 }
 
-dataset$view_in_window_2 <- if_else(
-  (str_detect(dataset$view_in_window_2, regex("запад", ignore_case = TRUE)) &
-    str_detect(dataset$view_in_window_2, regex("север", ignore_case = TRUE))) |
-    str_detect(dataset$view_in_window_2, regex("�����, �����", ignore_case = TRUE)) |
-    str_detect(dataset$view_in_window_2, regex("�����/�����", ignore_case = TRUE)),
-  north_west,
-  dataset$view_in_window_2
-)
+views_in_window_conditions[[south]] <- function(detect) {
+  detect("(юг)|(�� ����/�� ��)")
+}
 
-dataset$view_in_window_2 <- if_else(
-  (str_detect(dataset$view_in_window_2, regex("запад", ignore_case = TRUE)) &
-    str_detect(dataset$view_in_window_2, regex("юг", ignore_case = TRUE))) |
-    str_detect(dataset$view_in_window_2, regex("��, �����", ignore_case = TRUE)) |
-    str_detect(dataset$view_in_window_2, regex("�� ��/�� �����", ignore_case = TRUE)),
-  south_west,
-  dataset$view_in_window_2
-)
+views_in_window_conditions[[east]] <- function(detect) {
+  detect("(восток)|(�� ������)|(�� ����/�� ������)")
+}
 
-dataset$view_in_window_2 <- if_else(
-  (str_detect(dataset$view_in_window_2, regex("восток", ignore_case = TRUE)) &
-    str_detect(dataset$view_in_window_2, regex("север", ignore_case = TRUE))) |
-    str_detect(dataset$view_in_window_2, regex("�� �����/�� ������", ignore_case = TRUE)) |
-    str_detect(dataset$view_in_window_2, regex("�����/������", ignore_case = TRUE)),
-  north_east,
-  dataset$view_in_window_2
-)
+views_in_window_conditions[[west]] <- function(detect) {
+  detect("(запад)|(�� �����/�� �����)")
+}
 
-dataset$view_in_window_2 <- if_else(
-  str_detect(dataset$view_in_window_2, regex("восток", ignore_case = TRUE)) &
-    str_detect(dataset$view_in_window_2, regex("юг", ignore_case = TRUE)),
-  south_east,
-  dataset$view_in_window_2
-)
+views_in_window_conditions[[parking]] <- function(detect) {
+  detect("парковка")
+}
 
-dataset$view_in_window_2 <- if_else(
-  str_detect(dataset$view_in_window_2, regex("(запад)|(�� �����/�� �����)", ignore_case = TRUE)),
-  west,
-  dataset$view_in_window_2
-)
+views_in_window_conditions[[mall]] <- function(detect) {
+  detect("(тц)|(Баскет холл)|(Леруа Мерлен)|(������ ����)|(����� ������)")
+}
 
-dataset$view_in_window_2 <- if_else(
-  str_detect(dataset$view_in_window_2, regex("(восток)|(�� ������)|(�� ����/�� ������)", ignore_case = TRUE)),
-  east,
-  dataset$view_in_window_2
-)
+views_in_window_conditions[[garden]] <- function(detect) {
+  detect("(аллея)|(парк)|(площадь)")
+}
 
-dataset$view_in_window_2 <- if_else(
-  str_detect(dataset$view_in_window_2, regex("(юг)|(�� ����/�� ��)", ignore_case = TRUE)),
-  south,
-  dataset$view_in_window_2
-)
+views_in_window_conditions[[yard]] <- function(detect) {
+  detect("(двор)|(�� ���� � �� �����)|(�� ����)|(����, �������� ���)|(����, ����� ����)|(����, ����� ����, ��������)|(����, �����, �����. ��������, ��������)|(����, ��������)")
+}
 
-dataset$view_in_window_2 <- if_else(
-  str_detect(dataset$view_in_window_2, regex("север", ignore_case = TRUE)),
-  north,
-  dataset$view_in_window_2
-)
+views_in_window_conditions[[water]] <- function(detect) {
+  detect("(река)|(пруд)|(озеро)|(Волга)|(яхт-клуб)")
+}
 
-dataset$view_in_window_2 <- replace_by_reg(
-  dataset$view_in_window_2,
-  "аэропорт",
-  airport
-)
+views_in_window_conditions[[house]] <- function(detect) {
+  detect("(дом)|(����� ���)|(����� ����)|(��������������� �����, ����� ���)|(�� �����������, ����� ����)|(�������� ���/��. ��������)")
+}
 
-dataset$view_in_window_2 <- replace_by_reg(
-  dataset$view_in_window_2,
-  "парковка",
-  parking
-)
+views_in_window_conditions[[field]] <- function(detect) {
+  detect("(поле)|(Пустое пространство)")
+}
 
-dataset$view_in_window_2 <- replace_by_reg(
-  dataset$view_in_window_2,
-  "(аллея)|(парк)|(площадь)",
-  garden
-)
+views_in_window_conditions[[city]] <- function(detect) {
+  detect("(город)|(�����, �� �����������)")
+}
 
-dataset$view_in_window_2 <- replace_by_reg(
-  dataset$view_in_window_2,
-  "(река)|(пруд)|(озеро)|(Волга)|(яхт-клуб)",
-  water
-)
+views_in_window_conditions[[forest]] <- function(detect) {
+  detect("лес")
+}
 
-dataset$view_in_window_2 <- replace_by_reg(
-  dataset$view_in_window_2,
-  "лес",
-  forest
-)
+views_in_window_conditions[[playground]] <- function(detect) {
+  detect("(сад)|(площадка)|(����, �����, �����. ��������)|(���.���)|(������� ��������)")
+}
 
-dataset$view_in_window_2 <- replace_by_reg(
-  dataset$view_in_window_2,
-  "(сектор)|(коттеджи)|(������� ������)",
-  cottages
-)
+views_in_window_conditions[[cottages]] <- function(detect) {
+  detect("(сектор)|(коттеджи)|(������� ������)")
+}
 
-dataset$view_in_window_2 <- replace_by_reg(
-  dataset$view_in_window_2,
-  "(поле)|(Пустое пространство)",
-  field
-)
+views_in_window_conditions[[highway]] <- function(detect) {
+  detect("(дорога)|(шоссе)|(трасса)|(��������� �����, ������, �������� ������)|(��������� �����, ������, �������� ������/�������� ����)|(��. ��������/��������� �����, ������, �������� ������)|(�������������� �����, ����� ���,, ������)|(��������������� �����, ����� ���, �����, �������)")
+}
 
-dataset$view_in_window_2 <- replace_by_reg(
-  dataset$view_in_window_2,
-  "(сад)|(площадка)|(����, �����, �����. ��������)|(���.���)|(������� ��������)",
-  playground
-)
+views_in_window_conditions[[building]] <- function(detect) {
+  detect("(стройка)|(�������, �����)|(�������)")
+}
 
-dataset$view_in_window_2 <- replace_by_reg(
-  dataset$view_in_window_2,
-  "(школ)|(����, �����)|(����, ����� ����, �����, �����. ��������)",
-  school
-)
+views_in_window_conditions[[school]] <- function(detect) {
+  detect("(школ)|(����, �����)|(����, ����� ����, �����, �����. ��������)")
+}
 
-dataset$view_in_window_2 <- replace_by_reg(
-  dataset$view_in_window_2,
-  "(стройка)|(�������, �����)|(�������)",
-  building
-)
+views_in_window_conditions[[airport]] <- function(detect) {
+  detect("аэропорт")
+}
 
-dataset$view_in_window_2 <- replace_by_reg(
-  dataset$view_in_window_2,
-  "(тц)|(Баскет холл)|(Леруа Мерлен)|(������ ����)|(����� ������)",
-  mall
-)
-
-dataset$view_in_window_2 <- replace_by_reg(
-  dataset$view_in_window_2,
-  "(дорога)|(шоссе)|(трасса)|(��������� �����, ������, �������� ������)|(��������� �����, ������, �������� ������/�������� ����)|(��. ��������/��������� �����, ������, �������� ������)|(�������������� �����, ����� ���,, ������)|(��������������� �����, ����� ���, �����, �������)",
-  highway
-)
-
-dataset$view_in_window_2 <- replace_by_reg(
-  dataset$view_in_window_2,
-  "(двор)|(�� ���� � �� �����)|(�� ����)|(����, �������� ���)|(����, ����� ����)|(����, ����� ����, ��������)|(����, �����, �����. ��������, ��������)|(����, ��������)",
-  yard
-)
-
-dataset$view_in_window_2 <- replace_by_reg(
-  dataset$view_in_window_2,
-  "(город)|(�����, �� �����������)",
-  city
-)
-
-dataset$view_in_window_2 <- replace_by_reg(
-  dataset$view_in_window_2,
-  "(дом)|(����� ���)|(����� ����)|(��������������� �����, ����� ���)|(�� �����������, ����� ����)|(�������� ���/��. ��������)",
-  house
-)
-
-dataset$view_in_window_2 <- replace_by_reg(
-  dataset$view_in_window_2,
-  "ул",
-  street
-)
+views_in_window_conditions[[street]] <- function(detect) {
+  detect("ул")
+}
 
 
-dataset$view_in_window_2 <- as.factor(dataset$view_in_window)
+filtered_df <-
+  subset(
+    dataset[
+      ,
+      c(
+        "city",
+        "floor",
+        "total_area",
+        "living_area",
+        "kitchen_area",
+        "room_count",
+        "height",
+        "view_in_window",
+        "is_studio",
+        "total_price"
+      )
+    ],
+    !(city == "NULL" | str_detect(city, "�")) &
+      total_area > 0 &
+      living_area > 0 &
+      kitchen_area > 0 &
+      room_count > 0 &
+      total_price > 1
+  )
 
-summary(dataset$view_in_window_2)
+filtered_df$view_in_window <- as.character(filtered_df$view_in_window)
 
-# filtered_df <- dataset[
-#   ,
-#   c(
-#     "city",
-#     "floor",
-#     "total_area",
-#     "living_area",
-#     "kitchen_area",
-#     "room_count",
-#     "height",
-#     "view_in_window",
-#     "is_studio",
-#     "total_price"
-#   )
-# ]
+detector <- function(raw_value) {
+  function(str) {
+    return(str_detect(raw_value, regex(str, ignore_case = TRUE)))
+  }
+}
 
-# filtered_df %>%
-#   subset(
-#     !(city == "NULL" | str_detect(city, "�")) &
-#       total_area > 0 &
-#       living_area > 0 &
-#       kitchen_area > 0 &
-#       room_count > 0 &
-#       total_price > 1
-#   ) %>%
-#   write.csv("out/tables/filtered_apartments.csv")
+view_type_recognizer <- function(type) {
+  function(raw_value) {
+    detect <- detector(raw_value)
+    views_in_window_conditions[[type]](detect)
+  }
+}
+
+process_views_in_windows <- function(views) {
+  view_in_window_types <-
+    lapply(
+      seq_len(nrow(filtered_df)),
+      function(x) NA
+    )
+
+  for (view in views) {
+    recognize <- view_type_recognizer(view)
+
+    view_in_window_types <- mapply(
+      function(types, raw_value) {
+        resulted_type <- ifelse(recognize(raw_value), view, NA)
+
+        if (is.na(types)) {
+          return(resulted_type)
+        } else {
+          if (!is.na(resulted_type)) {
+            return(paste(
+              types,
+              resulted_type,
+              sep = "_"
+            ))
+          } else {
+            return(types)
+          }
+        }
+      },
+      types = view_in_window_types,
+      raw_value = filtered_df$view_in_window
+    )
+
+    print(summary(as.factor(view_in_window_types)))
+  }
+
+  return(view_in_window_types)
+}
+
+filtered_df$view_in_window_types <- as.factor(process_views_in_windows(
+  keys(views_in_window_conditions)
+))
+
+typeof(filtered_df$view_in_window_types)
+summary(filtered_df$view_in_window_types)
+
+filtered_df %>%
+  write.csv("out/tables/filtered_apartments.csv")
