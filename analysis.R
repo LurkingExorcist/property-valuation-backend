@@ -40,10 +40,9 @@ dataset <- read.table(
 )
 
 dataset$city <- as.factor(dataset$city)
-dataset$is_studio <- as.factor(dataset$is_studio)
 
 build_regression_plot <- function(df, x_col, y_col) {
-  pdf(sprintf("out/plots/%s_%s_plot.pdf", x_col, y_col))
+  pdf(sprintf("out/plots/%s_%s_linreg.pdf", x_col, y_col))
 
   xy_df <- data.frame(x = df[, x_col], y = df[, y_col])
   xy_df <- xy_df[order(xy_df$x), ]
@@ -64,5 +63,36 @@ write_grouping_table <- function(df, col_name) {
     write.csv(sprintf("out/tables/grouped_by_%s.csv", col_name))
 }
 
-# build_regression_plot(dataset, "floor", "total_price")
-write_grouping_table(dataset, "view_in_window")
+
+build_regression_plot(dataset, "floor", "total_price")
+build_regression_plot(dataset, "total_area", "total_price")
+build_regression_plot(dataset, "living_area", "total_price")
+build_regression_plot(dataset, "kitchen_area", "total_price")
+build_regression_plot(dataset, "room_count", "total_price")
+build_regression_plot(dataset, "height", "total_price")
+
+write_grouping_table(dataset, "city")
+write_grouping_table(dataset, "floor")
+write_grouping_table(dataset, "room_count")
+write_grouping_table(dataset, "height")
+write_grouping_table(dataset, "is_studio")
+write_grouping_table(dataset, "view_airport")
+write_grouping_table(dataset, "view_building")
+write_grouping_table(dataset, "view_city")
+write_grouping_table(dataset, "view_cottages")
+write_grouping_table(dataset, "view_east")
+write_grouping_table(dataset, "view_field")
+write_grouping_table(dataset, "view_forest")
+write_grouping_table(dataset, "view_garden")
+write_grouping_table(dataset, "view_highway")
+write_grouping_table(dataset, "view_house")
+write_grouping_table(dataset, "view_mall")
+write_grouping_table(dataset, "view_north")
+write_grouping_table(dataset, "view_parking")
+write_grouping_table(dataset, "view_playground")
+write_grouping_table(dataset, "view_school")
+write_grouping_table(dataset, "view_south")
+write_grouping_table(dataset, "view_street")
+write_grouping_table(dataset, "view_water")
+write_grouping_table(dataset, "view_west")
+write_grouping_table(dataset, "view_yard")
