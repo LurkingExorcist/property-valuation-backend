@@ -163,10 +163,6 @@ views_in_window_conditions[[school]] <- function(detect) {
   detect("(школ)|(����, �����)|(����, ����� ����, �����, �����. ��������)")
 }
 
-views_in_window_conditions[[airport]] <- function(detect) {
-  detect("аэропорт")
-}
-
 views_in_window_conditions[[street]] <- function(detect) {
   detect("ул")
 }
