@@ -1,8 +1,7 @@
 library("dplyr")
 library("stringr")
 library("plyr")
-library("data.table")
-library(hash)
+library("hash")
 
 dataset <- read.table(
   "data/apartments.csv",
@@ -117,7 +116,7 @@ views_in_window_conditions[[mall]] <- function(detect) {
 }
 
 views_in_window_conditions[[garden]] <- function(detect) {
-  detect("(аллея)|(парк)|(площадь)")
+  detect("(аллея)|(парк)|(площадь)") & !detect("парковка")
 }
 
 views_in_window_conditions[[yard]] <- function(detect) {
@@ -172,24 +171,9 @@ views_in_window_conditions[[street]] <- function(detect) {
   detect("ул")
 }
 
-
 filtered_df <-
   subset(
-    dataset[
-      ,
-      c(
-        "city",
-        "floor",
-        "total_area",
-        "living_area",
-        "kitchen_area",
-        "room_count",
-        "height",
-        "view_in_window",
-        "is_studio",
-        "total_price"
-      )
-    ],
+    dataset,
     !(city == "NULL" | str_detect(city, "�")) &
       total_area > 0 &
       living_area > 0 &
@@ -198,7 +182,26 @@ filtered_df <-
       total_price > 1
   )
 
-filtered_df$view_in_window <- as.character(filtered_df$view_in_window)
+filtered_df$is_studio = as.character(filtered_df$is_studio)
+filtered_df$is_studio = ifelse(filtered_df$is_studio == "True", 1 , 0)
+filtered_df$is_studio = as.factor(filtered_df$is_studio)
+
+views_in_window <- as.character(filtered_df$view_in_window)
+total_price <- filtered_df$total_price
+
+filtered_df <- filtered_df[
+  ,
+  c(
+    "city",
+    "floor",
+    "total_area",
+    "living_area",
+    "kitchen_area",
+    "room_count",
+    "height",
+    "is_studio"
+  )
+]
 
 detector <- function(raw_value) {
   function(str) {
@@ -213,50 +216,30 @@ view_type_recognizer <- function(type) {
   }
 }
 
-process_views_in_windows <- function(views) {
-  view_in_window_types <-
-    lapply(
-      seq_len(nrow(filtered_df)),
-      function(x) NA
-    )
+process_view_type <- function(view_type) {
+  recognize <- view_type_recognizer(view_type)
 
-  for (view in views) {
-    recognize <- view_type_recognizer(view)
-
-    view_in_window_types <- mapply(
-      function(types, raw_value) {
-        resulted_type <- ifelse(recognize(raw_value), view, NA)
-
-        if (is.na(types)) {
-          return(resulted_type)
-        } else {
-          if (!is.na(resulted_type)) {
-            return(paste(
-              types,
-              resulted_type,
-              sep = "_"
-            ))
-          } else {
-            return(types)
-          }
-        }
-      },
-      types = view_in_window_types,
-      raw_value = filtered_df$view_in_window
-    )
-
-    print(summary(as.factor(view_in_window_types)))
-  }
+  view_in_window_types <- sapply(
+    views_in_window,
+    function(raw_value) {
+      return(ifelse(recognize(raw_value), 1, 0))
+    }
+  )
 
   return(view_in_window_types)
 }
 
-filtered_df$view_in_window_types <- as.factor(process_views_in_windows(
-  keys(views_in_window_conditions)
-))
+insert_columns_view_types <- function(view_types) {
+  for (view_type in view_types) {
+    col_view_type <- sprintf("view_%s", tolower(view_type))
+    filtered_df[[col_view_type]] <- process_view_type(view_type)
+  }
 
-typeof(filtered_df$view_in_window_types)
-summary(filtered_df$view_in_window_types)
+  return(filtered_df)
+}
+
+filtered_df <- insert_columns_view_types(keys(views_in_window_conditions))
+filtered_df$total_price <- total_price
 
 filtered_df %>%
   write.csv("out/tables/filtered_apartments.csv")

@@ -14,8 +14,27 @@ dataset <- read.table(
     "kitchen_area",
     "room_count",
     "height",
-    "view_in_window",
     "is_studio",
+    "view_airport",
+    "view_building",
+    "view_city",
+    "view_cottages",
+    "view_east",
+    "view_field",
+    "view_forest",
+    "view_garden",
+    "view_highway",
+    "view_house",
+    "view_mall",
+    "view_north",
+    "view_parking",
+    "view_playground",
+    "view_school",
+    "view_south",
+    "view_street",
+    "view_water",
+    "view_west",
+    "view_yard",
     "total_price"
   )
 )
@@ -45,4 +64,5 @@ write_grouping_table <- function(df, col_name) {
     write.csv(sprintf("out/tables/grouped_by_%s.csv", col_name))
 }
 
-build_regression_plot(dataset, "floor", "total_price")
+# build_regression_plot(dataset, "floor", "total_price")
+write_grouping_table(dataset, "view_in_window")
