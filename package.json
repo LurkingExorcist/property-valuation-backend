@@ -1,6 +1,6 @@
 {
    "name": "server",
-   "version": "0.0.1",
+   "version": "1.0.0",
    "description": "Graduation project web-server.",
    "type": "commonjs",
    "scripts": {
