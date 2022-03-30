@@ -1,0 +1,44 @@
+{
+   "name": "server",
+   "version": "0.0.1",
+   "description": "Graduation project web-server.",
+   "type": "commonjs",
+   "scripts": {
+      "start": "ts-node src/index.ts",
+      "typeorm": "typeorm-ts-node-commonjs"
+   },
+   "dependencies": {
+      "bcrypt": "^5.0.1",
+      "csv-parse": "^5.0.4",
+      "express": "^4.17.3",
+      "lodash": "^4.17.21",
+      "pg": "^8.4.0",
+      "reflect-metadata": "^0.1.13",
+      "typeorm": "0.3.4"
+   },
+   "devDependencies": {
+      "@faker-js/faker": "^6.1.1",
+      "@types/bcrypt": "^5.0.0",
+      "@types/eslint": "^8.4.1",
+      "@types/express": "^4.17.13",
+      "@types/lodash": "^4.14.181",
+      "@types/node": "^16.11.10",
+      "@typescript-eslint/eslint-plugin": "^5.17.0",
+      "@typescript-eslint/parser": "^5.17.0",
+      "dotenv": "^16.0.0",
+      "eslint": "^8.12.0",
+      "eslint-config-airbnb-base": "^15.0.0",
+      "eslint-config-airbnb-typescript": "^16.1.4",
+      "eslint-config-prettier": "^8.5.0",
+      "eslint-plugin-import": "^2.25.4",
+      "eslint-plugin-prettier": "^4.0.0",
+      "eslint-plugin-simple-import-sort": "^7.0.0",
+      "module-alias": "^2.2.2",
+      "prettier": "2.6.1",
+      "ts-node": "10.4.0",
+      "typescript": "4.5.2"
+   },
+   "_moduleAliases": {
+      "@": "src"
+   }
+}
