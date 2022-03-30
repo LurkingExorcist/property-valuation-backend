@@ -95,14 +95,6 @@ views_in_window_conditions[[north]] <- function(detect) {
   detect("север")
 }
 
-views_in_window_conditions[[south]] <- function(detect) {
-  detect("(юг)|(�� ����/�� ��)")
-}
-
-views_in_window_conditions[[east]] <- function(detect) {
-  detect("(восток)|(�� ������)|(�� ����/�� ������)")
-}
-
 views_in_window_conditions[[west]] <- function(detect) {
   detect("(запад)|(�� �����/�� �����)")
 }
@@ -111,24 +103,12 @@ views_in_window_conditions[[parking]] <- function(detect) {
   detect("парковка")
 }
 
-views_in_window_conditions[[mall]] <- function(detect) {
-  detect("(тц)|(Баскет холл)|(Леруа Мерлен)|(������ ����)|(����� ������)")
-}
-
-views_in_window_conditions[[garden]] <- function(detect) {
-  detect("(аллея)|(парк)|(площадь)") & !detect("парковка")
-}
-
 views_in_window_conditions[[yard]] <- function(detect) {
   detect("(двор)|(�� ���� � �� �����)|(�� ����)|(����, �������� ���)|(����, ����� ����)|(����, ����� ����, ��������)|(����, �����, �����. ��������, ��������)|(����, ��������)")
 }
 
 views_in_window_conditions[[water]] <- function(detect) {
   detect("(река)|(пруд)|(озеро)|(Волга)|(яхт-клуб)")
-}
-
-views_in_window_conditions[[house]] <- function(detect) {
-  detect("(дом)|(����� ���)|(����� ����)|(��������������� �����, ����� ���)|(�� �����������, ����� ����)|(�������� ���/��. ��������)")
 }
 
 views_in_window_conditions[[field]] <- function(detect) {
@@ -149,10 +129,6 @@ views_in_window_conditions[[playground]] <- function(detect) {
 
 views_in_window_conditions[[cottages]] <- function(detect) {
   detect("(сектор)|(коттеджи)|(������� ������)")
-}
-
-views_in_window_conditions[[highway]] <- function(detect) {
-  detect("(дорога)|(шоссе)|(трасса)|(��������� �����, ������, �������� ������)|(��������� �����, ������, �������� ������/�������� ����)|(��. ��������/��������� �����, ������, �������� ������)|(�������������� �����, ����� ���,, ������)|(��������������� �����, ����� ���, �����, �������)")
 }
 
 views_in_window_conditions[[building]] <- function(detect) {
@@ -178,9 +154,9 @@ filtered_df <-
       total_price > 1
   )
 
-filtered_df$is_studio = as.character(filtered_df$is_studio)
-filtered_df$is_studio = ifelse(filtered_df$is_studio == "True", 1 , 0)
-filtered_df$is_studio = as.factor(filtered_df$is_studio)
+filtered_df$is_studio <- as.character(filtered_df$is_studio)
+filtered_df$is_studio <- ifelse(filtered_df$is_studio == "True", 1, 0)
+filtered_df$is_studio <- as.factor(filtered_df$is_studio)
 
 views_in_window <- as.character(filtered_df$view_in_window)
 total_price <- filtered_df$total_price
