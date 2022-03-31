@@ -82,36 +82,35 @@ const importApartments = async () => {
       excludeHeader: true,
     });
 
+    const foundViews = await AppDataSource.manager.find(ViewInWindow);
+
     const queryRunner = AppDataSource.createQueryRunner();
     await queryRunner.startTransaction();
 
     try {
-      await Promise.all(
-        table
-          .map(recordToEntities)
-          .map(async ({ apartment, viewsInWindow }, index, { length }) => {
-            viewsInWindow = await Promise.all(
-              viewsInWindow.map(async (entity) => {
-                const result = await queryRunner.manager.findOne(ViewInWindow, {
-                  where: {
-                    name: entity.name,
-                  },
-                });
+      let savedViewsNames: string[] = foundViews.map(view => view.name);
+      const entities = table.map(recordToEntities);
 
-                if (_.isNull(result)) {
-                  await queryRunner.manager.insert(ViewInWindow, viewsInWindow);
-                }
+      let index = 0
+      for (const { apartment, viewsInWindow } of entities) {
+        apartment.viewsInWindow = _.unionBy(
+          await queryRunner.manager.save(
+            viewsInWindow.filter((view) => !savedViewsNames.includes(view.name))
+          ),
+          viewsInWindow,
+          view => view.name
+        );
 
-                return result || entity;
-              })
-            );
+        savedViewsNames = _.union(
+          savedViewsNames,
+          viewsInWindow.map((view) => view.name)
+        );
 
-            apartment.viewsInWindow = viewsInWindow;
+        await queryRunner.manager.save(apartment);
+        console.info(`${index + 1} of ${entities.length} is saved`);
 
-            await queryRunner.manager.insert(Apartment, apartment);
-            console.info(`${index+1} of ${length} is inserted`);
-          })
-      );
+        index++;
+      }
 
       await queryRunner.commitTransaction();
     } catch (err) {

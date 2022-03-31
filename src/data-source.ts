@@ -16,10 +16,10 @@ const AppDataSource = new DataSource({
   password: process.env.PG_PASSWORD,
   database: process.env.PG_DATABASE,
   synchronize: true,
-  logging: false,
   entities: [AccessRight, Apartment, AppSection, User, ViewInWindow],
   migrations: [],
   subscribers: [],
+  logging: ['query', 'error'],
 });
 
 export default AppDataSource;

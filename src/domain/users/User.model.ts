@@ -1,5 +1,11 @@
-import {compareSync, hashSync} from 'bcrypt';
-import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { compareSync, hashSync } from 'bcrypt';
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 import AccessRight from '../access-rights/AccessRight.model';
 
@@ -23,6 +29,7 @@ export default class User {
   passwordHash: string;
 
   @ManyToMany(() => AccessRight)
+  @JoinTable()
   accessRights: AccessRight[];
 
   static new(options: {

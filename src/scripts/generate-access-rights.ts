@@ -45,7 +45,7 @@ const generateAccessRights = async () => {
           );
 
           if (_.isNull(foundAppSection)) {
-            await queryRunner.manager.insert(AppSection, appSection);
+            await queryRunner.manager.save(appSection);
           }
 
           appSection = foundAppSection || appSection;
@@ -65,12 +65,12 @@ const generateAccessRights = async () => {
               );
 
               if (_.isNull(foundAccessRight)) {
-                await queryRunner.manager.insert(AccessRight, entity);
+                await queryRunner.manager.save(entity);
               }
             })
           );
 
-          console.info(`${index+1} of ${length} is inserted`);
+          console.info(`${index+1} of ${length} is saved`);
         })
       );
 

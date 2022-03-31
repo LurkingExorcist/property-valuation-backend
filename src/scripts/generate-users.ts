@@ -30,8 +30,8 @@ const generateUsers = async () => {
             })
           )
           .map(async (user, index, { length }) => {
-            await queryRunner.manager.insert(User, user);
-            console.info(`${index+1} of ${length} is inserted`);
+            await queryRunner.manager.save(user);
+            console.info(`${index+1} of ${length} is saved`);
           })
       );
       await queryRunner.commitTransaction();
