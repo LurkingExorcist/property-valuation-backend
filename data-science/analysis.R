@@ -1,5 +1,8 @@
 library("dplyr")
 library("stringr")
+library("corrplot")
+library("broom")
+
 
 dataset <- read.table(
   "out/tables/filtered_apartments.csv",
@@ -56,81 +59,105 @@ write_grouping_table <- function(df, col_name) {
     write.csv(sprintf("out/tables/grouped_by_%s.csv", col_name))
 }
 
+write_correlation_test <- function(df, x_col, y_col) {
+  tidy(cor.test(df[, x_col], df[, y_col])) %>%
+    write.csv(sprintf(
+      "out/tables/correlation_%s_%s.csv",
+      x_col,
+      y_col
+    ))
+}
 
-# build_regression_plot(dataset, "floor", "total_price")
-# build_regression_plot(dataset, "total_area", "total_price")
-# build_regression_plot(dataset, "living_area", "total_price")
-# build_regression_plot(dataset, "kitchen_area", "total_price")
-# build_regression_plot(dataset, "room_count", "total_price")
-# build_regression_plot(dataset, "height", "total_price")
+correlations <- function(df) {
+  selected_dataset <- df[
+    ,
+    c(
+      "total_price",
+      "floor",
+      "total_area",
+      "living_area",
+      "kitchen_area",
+      "room_count",
+      "height",
+      "is_studio",
+      "view_building",
+      "view_city",
+      "view_cottages",
+      "view_field",
+      "view_forest",
+      "view_north",
+      "view_parking",
+      "view_playground",
+      "view_school",
+      "view_street",
+      "view_water",
+      "view_west",
+      "view_yard"
+    )
+  ]
 
-# write_grouping_table(dataset, "city")
-# write_grouping_table(dataset, "floor")
-# write_grouping_table(dataset, "room_count")
-# write_grouping_table(dataset, "height")
-# write_grouping_table(dataset, "is_studio")
-# write_grouping_table(dataset, "view_building")
-# write_grouping_table(dataset, "view_city")
-# write_grouping_table(dataset, "view_cottages")
-# write_grouping_table(dataset, "view_field")
-# write_grouping_table(dataset, "view_forest")
-# write_grouping_table(dataset, "view_north")
-# write_grouping_table(dataset, "view_parking")
-# write_grouping_table(dataset, "view_playground")
-# write_grouping_table(dataset, "view_school")
-# write_grouping_table(dataset, "view_street")
-# write_grouping_table(dataset, "view_water")
-# write_grouping_table(dataset, "view_west")
-# write_grouping_table(dataset, "view_yard")
+  write_correlation_test(selected_dataset, "floor", "total_price")
+  write_correlation_test(selected_dataset, "total_area", "total_price")
+  write_correlation_test(selected_dataset, "living_area", "total_price")
+  write_correlation_test(selected_dataset, "kitchen_area", "total_price")
+  write_correlation_test(selected_dataset, "room_count", "total_price")
+  write_correlation_test(selected_dataset, "height", "total_price")
+  write_correlation_test(selected_dataset, "is_studio", "total_price")
+  write_correlation_test(selected_dataset, "view_building", "total_price")
+  write_correlation_test(selected_dataset, "view_city", "total_price")
+  write_correlation_test(selected_dataset, "view_cottages", "total_price")
+  write_correlation_test(selected_dataset, "view_field", "total_price")
+  write_correlation_test(selected_dataset, "view_forest", "total_price")
+  write_correlation_test(selected_dataset, "view_north", "total_price")
+  write_correlation_test(selected_dataset, "view_parking", "total_price")
+  write_correlation_test(selected_dataset, "view_playground", "total_price")
+  write_correlation_test(selected_dataset, "view_school", "total_price")
+  write_correlation_test(selected_dataset, "view_street", "total_price")
+  write_correlation_test(selected_dataset, "view_water", "total_price")
+  write_correlation_test(selected_dataset, "view_west", "total_price")
+  write_correlation_test(selected_dataset, "view_yard", "total_price")
 
-selected_dataset <- dataset[
-  ,
-  c(
-    "floor",
-    "total_area",
-    "living_area",
-    "kitchen_area",
-    "room_count",
-    "height",
-    "is_studio",
-    "view_building",
-    "view_city",
-    "view_cottages",
-    "view_field",
-    "view_forest",
-    "view_north",
-    "view_parking",
-    "view_playground",
-    "view_school",
-    "view_street",
-    "view_water",
-    "view_west",
-    "view_yard",
-    "total_price"
-  )
-]
+  pdf("out/plots/correlation.pdf")
 
-# cor.test(selected_dataset$floor, selected_dataset$total_price)
-# cor.test(selected_dataset$total_area, selected_dataset$total_price)
-# cor.test(selected_dataset$living_area, selected_dataset$total_price)
-# cor.test(selected_dataset$kitchen_area, selected_dataset$total_price)
-# cor.test(selected_dataset$room_count, selected_dataset$total_price)
-# cor.test(selected_dataset$height, selected_dataset$total_price)
-# cor.test(selected_dataset$is_studio, selected_dataset$total_price)
-# cor.test(selected_dataset$view_building, selected_dataset$total_price)
-# cor.test(selected_dataset$view_city, selected_dataset$total_price)
-# cor.test(selected_dataset$view_cottages, selected_dataset$total_price)
-# cor.test(selected_dataset$view_field, selected_dataset$total_price)
-# cor.test(selected_dataset$view_forest, selected_dataset$total_price)
-# cor.test(selected_dataset$view_north, selected_dataset$total_price)
-# cor.test(selected_dataset$view_parking, selected_dataset$total_price)
-# cor.test(selected_dataset$view_playground, selected_dataset$total_price)
-# cor.test(selected_dataset$view_school, selected_dataset$total_price)
-# cor.test(selected_dataset$view_street, selected_dataset$total_price)
-# cor.test(selected_dataset$view_water, selected_dataset$total_price)
-# cor.test(selected_dataset$view_west, selected_dataset$total_price)
-# cor.test(selected_dataset$view_yard, selected_dataset$total_price)
+  cor(selected_dataset) %>%
+    corrplot(
+      method = "color",
+      addCoef.col = "black",
+      number.cex = 0.5,
+      number.font = 1
+    )
 
-cor(selected_dataset) %>%
-  round(3) %>%
-  write.csv("out/tables/correlation.csv")
+  dev.off()
+}
+
+run_all_analysis <- function() {
+  build_regression_plot(dataset, "floor", "total_price")
+  build_regression_plot(dataset, "total_area", "total_price")
+  build_regression_plot(dataset, "living_area", "total_price")
+  build_regression_plot(dataset, "kitchen_area", "total_price")
+  build_regression_plot(dataset, "room_count", "total_price")
+  build_regression_plot(dataset, "height", "total_price")
+
+  write_grouping_table(dataset, "city")
+  write_grouping_table(dataset, "floor")
+  write_grouping_table(dataset, "room_count")
+  write_grouping_table(dataset, "height")
+  write_grouping_table(dataset, "is_studio")
+  write_grouping_table(dataset, "view_building")
+  write_grouping_table(dataset, "view_city")
+  write_grouping_table(dataset, "view_cottages")
+  write_grouping_table(dataset, "view_field")
+  write_grouping_table(dataset, "view_forest")
+  write_grouping_table(dataset, "view_north")
+  write_grouping_table(dataset, "view_parking")
+  write_grouping_table(dataset, "view_playground")
+  write_grouping_table(dataset, "view_school")
+  write_grouping_table(dataset, "view_street")
+  write_grouping_table(dataset, "view_water")
+  write_grouping_table(dataset, "view_west")
+  write_grouping_table(dataset, "view_yard")
+
+  correlations(dataset)
+}
+
+run_all_analysis()
