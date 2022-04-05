@@ -1,5 +1,7 @@
 library(tidyverse)
-library(caret)
+library(mgcv)
+library(dplyr)
+library(formattable)
 
 theme_set(theme_classic())
 
@@ -50,36 +52,32 @@ train_data <- apartments[split_vec == 0, ]
 test_data <- apartments[split_vec == 1, ]
 
 train_lm_model <- function(dataset) {
-  model <- train(
+  model <- gam(
     total_price ~
-      poly(city, 20) +
-      poly(floor, 8) +
-      poly(total_area, 8) +
-      poly(living_area, 8) +
-      poly(kitchen_area, 8) +
-      poly(room_count, 5) +
-      poly(height, 8) +
+      s(city, k = 33) +
+      s(floor) +
+      s(total_area) +
+      s(living_area) +
+      s(kitchen_area) +
+      s(room_count, k = 6) +
+      s(height) +
       is_studio +
       view_building +
       view_city +
       view_cottages +
       view_field +
-      view_forest +
       view_north +
-      view_parking +
       view_playground +
       view_school +
       view_street +
       view_water +
-      view_west +
-      view_yard,
-    data = dataset,
-    method = "lm"
+      view_west,
+    data = dataset
   )
 
   print(summary(model))
 
-  saveRDS(model, "out/models/lm_model.rds")
+  saveRDS(model, "out/models/gam_model.rds")
 
   return(model)
 }
@@ -87,8 +85,14 @@ train_lm_model <- function(dataset) {
 plot_model <- function(model) {
   pdf("out/plots/predictions.pdf")
 
-  area_price_df <- data.frame(x = test_data$total_area, y = test_data$total_price)
-  predicted_price_df <- data.frame(x = test_data$total_area, y = predict(model, test_data))
+  area_price_df <- data.frame(
+    x = test_data$total_area,
+    y = test_data$total_price
+  )
+  predicted_price_df <- data.frame(
+    x = test_data$total_area,
+    y = predict(model, test_data)
+  )
 
   plot(area_price_df, type = "p", pch = 18, col = "blue")
   points(predicted_price_df, type = "p", pch = 18, col = "red")
@@ -96,6 +100,27 @@ plot_model <- function(model) {
   dev.off()
 }
 
-# summary(readRDS("out/models/lm_model.rds"))
-model <- readRDS("out/models/lm_model.rds")
-coef(model)
+predict_model <- function(model, dataset) {
+  predicted_data <- dataset %>%
+    mutate(
+      total_price_pred = predict(model, newdata = .),
+      difference_val = abs(total_price - total_price_pred),
+      difference_percent = percent(abs((total_price_pred / total_price) - 1))
+    ) %>%
+    mutate(
+      total_price = accounting(total_price),
+      total_price_pred = accounting(total_price_pred),
+      difference_val = accounting(difference_val),
+      difference_percent = percent(difference_percent)
+    )
+
+  return(predicted_data)
+}
+
+model <- readRDS("out/models/gam_model.rds")
+
+model$coefficients
+
+# model$residuals
+
+# predict_model(model, apartments)

@@ -3,7 +3,6 @@ library("stringr")
 library("corrplot")
 library("broom")
 
-
 dataset <- read.table(
   "out/tables/filtered_apartments.csv",
   sep = ",",
@@ -60,7 +59,8 @@ write_grouping_table <- function(df, col_name) {
 }
 
 write_correlation_test <- function(df, x_col, y_col) {
-  tidy(cor.test(df[, x_col], df[, y_col])) %>%
+  cor.test(df[, x_col], df[, y_col]) %>%
+    tidy() %>%
     write.csv(sprintf(
       "out/tables/correlation_%s_%s.csv",
       x_col,
