@@ -24,7 +24,6 @@ const VIEW_COLUMNS = [
   'view_west',
   'view_yard',
 ] as const;
-
 const TABLE_COLUMNS = [
   'index',
   'city',
@@ -61,7 +60,7 @@ const recordToEntities = (row: ApartmentRecord) => {
     height: Number(row.height),
     isStudio: Boolean(+row.is_studio),
     totalPrice: Math.floor(Number(row.total_price)),
-    viewsInWindow,
+    viewsInWindow: [],
   });
 
   return {
@@ -88,17 +87,17 @@ const importApartments = async () => {
     await queryRunner.startTransaction();
 
     try {
-      let savedViewsNames: string[] = foundViews.map(view => view.name);
+      let savedViewsNames: string[] = foundViews.map((view) => view.name);
       const entities = table.map(recordToEntities);
 
-      let index = 0
+      let index = 0;
       for (const { apartment, viewsInWindow } of entities) {
         apartment.viewsInWindow = _.unionBy(
           await queryRunner.manager.save(
             viewsInWindow.filter((view) => !savedViewsNames.includes(view.name))
           ),
           viewsInWindow,
-          view => view.name
+          (view) => view.name
         );
 
         savedViewsNames = _.union(
