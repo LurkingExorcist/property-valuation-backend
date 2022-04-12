@@ -3,7 +3,7 @@ library(mgcv)
 library(dplyr)
 library(formattable)
 
-theme_set(theme_classic())
+set.seed(500)
 
 apartments <- read.table(
   "out/tables/filtered_apartments.csv",
@@ -51,7 +51,7 @@ split_vec <- sample(
 train_data <- apartments[split_vec == 0, ]
 test_data <- apartments[split_vec == 1, ]
 
-train_lm_model <- function(dataset) {
+train_gam_model <- function(dataset) {
   model <- gam(
     total_price ~
       s(city, k = 33) +
@@ -105,7 +105,7 @@ predict_model <- function(model, dataset) {
     mutate(
       total_price_pred = predict(model, newdata = .),
       difference_val = abs(total_price - total_price_pred),
-      difference_percent = percent(abs((total_price_pred / total_price) - 1))
+      difference_percent = (abs((total_price_pred / total_price) - 1)) * 100
     ) %>%
     mutate(
       total_price = accounting(total_price),
@@ -117,10 +117,8 @@ predict_model <- function(model, dataset) {
   return(predicted_data)
 }
 
-model <- readRDS("out/models/gam_model.rds")
-
-model$coefficients
-
-# model$residuals
-
-# predict_model(model, apartments)
+train_data %>%
+  train_gam_model() %>%
+  predict_model(test_data) %>%
+  summary() %>%
+  write.csv('./out/tables/predicted_prices_summary.csv')
