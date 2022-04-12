@@ -19,7 +19,7 @@ const AppDataSource = new DataSource({
   entities: [AccessRight, Apartment, AppSection, User, ViewInWindow],
   migrations: [],
   subscribers: [],
-  logging: ['query', 'error'],
+  // logging: ['query', 'error'],
 });
 
 export default AppDataSource;
