@@ -3,6 +3,9 @@ library("stringr")
 library("corrplot")
 library("broom")
 
+dir.create("out/tables", showWarnings = FALSE)
+dir.create("out/plots", showWarnings = FALSE)
+
 dataset <- read.table(
   "out/tables/filtered_apartments.csv",
   sep = ",",

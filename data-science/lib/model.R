@@ -3,6 +3,9 @@ library(mgcv)
 library(dplyr)
 library(formattable)
 
+dir.create("out/models", showWarnings = FALSE)
+dir.create("out/tables", showWarnings = FALSE)
+
 set.seed(500)
 
 apartments <- read.table(
@@ -82,24 +85,6 @@ train_gam_model <- function(dataset) {
   return(model)
 }
 
-plot_model <- function(model) {
-  pdf("out/plots/predictions.pdf")
-
-  area_price_df <- data.frame(
-    x = test_data$total_area,
-    y = test_data$total_price
-  )
-  predicted_price_df <- data.frame(
-    x = test_data$total_area,
-    y = predict(model, test_data)
-  )
-
-  plot(area_price_df, type = "p", pch = 18, col = "blue")
-  points(predicted_price_df, type = "p", pch = 18, col = "red")
-
-  dev.off()
-}
-
 predict_model <- function(model, dataset) {
   predicted_data <- dataset %>%
     mutate(
@@ -121,4 +106,4 @@ train_data %>%
   train_gam_model() %>%
   predict_model(test_data) %>%
   summary() %>%
-  write.csv('./out/tables/predicted_prices_summary.csv')
+  write.csv("./out/tables/predicted_prices_summary.csv")

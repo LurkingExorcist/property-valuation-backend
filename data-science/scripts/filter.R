@@ -3,6 +3,8 @@ library("stringr")
 library("plyr")
 library("hash")
 
+dir.create("out/tables", showWarnings = FALSE)
+
 dataset <- read.table(
   "data/apartments.csv",
   sep = ",",
