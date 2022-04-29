@@ -7,12 +7,14 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
+import IModel from '@/interfaces/IModel';
+
 import AccessRight from '../access-rights/AccessRight.model';
 
 const SALT_ROUNDS = 10;
 
 @Entity()
-export default class User {
+export default class User implements IModel {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

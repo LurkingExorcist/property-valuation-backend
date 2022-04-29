@@ -1,7 +1,9 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
+import IModel from '@/interfaces/IModel';
+
 @Entity()
-export default class AppSection {
+export default class AppSection implements IModel {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

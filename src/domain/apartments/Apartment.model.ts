@@ -8,8 +8,10 @@ import {
 
 import ViewInWindow from '@/domain/views-in-window/ViewInWindow.model';
 
+import IModel from '@/interfaces/IModel';
+
 @Entity()
-export default class Apartment {
+export default class Apartment implements IModel {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

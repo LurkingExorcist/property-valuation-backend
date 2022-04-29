@@ -43,9 +43,12 @@ const runAssociation = async (row: ApartmentRecord) => {
   const viewNames = _(row)
     .entries()
     .filter(
-      ([key, value]) => VIEW_COLUMNS.includes(key as any) && Boolean(+value)
+      ([key, value]) =>
+        VIEW_COLUMNS.includes(
+          key as unknown as ElementType<typeof VIEW_COLUMNS>
+        ) && Boolean(+value)
     )
-    .map(([key, value]) => key)
+    .map(([key]) => key)
     .value();
 
   const viewsInWindow = await Promise.all(

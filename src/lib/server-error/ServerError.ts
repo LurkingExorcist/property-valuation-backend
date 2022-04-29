@@ -1,0 +1,68 @@
+import { StatusCodes } from 'http-status-codes';
+
+import { ENTITY_NAMES_DICT } from '@/config';
+import { EntityType } from '@/types';
+
+export default class ServerError {
+  status: StatusCodes;
+  title: string;
+  message: string;
+  exception?: Error;
+
+  constructor(options: {
+    status: StatusCodes;
+    title: string;
+    message: string;
+    exception?: Error;
+  }) {
+    this.status = options.status;
+    this.title = options.title;
+    this.message = options.message;
+    this.exception = options.exception;
+  }
+
+  static badRequest(options: { message: string; exception?: Error }) {
+    return new ServerError({
+      status: StatusCodes.BAD_REQUEST,
+      title: `Запрос не был выполнен`,
+      message: options.message,
+      exception: options.exception,
+    });
+  }
+
+  static cantCreate(options: { entity: EntityType; exception?: Error }) {
+    return ServerError.badRequest({
+      message: `Не удалось создать запись сущности "${
+        ENTITY_NAMES_DICT[options.entity]
+      }"`,
+      exception: options.exception,
+    });
+  }
+
+  static cantFind(options: { entity: EntityType; exception?: Error }) {
+    return ServerError.badRequest({
+      message: `Не удалось найти запись сущности "${
+        ENTITY_NAMES_DICT[options.entity]
+      }"`,
+      exception: options.exception,
+    });
+  }
+
+  static cantUpdate(options: { entity: EntityType; exception?: Error }) {
+    return ServerError.badRequest({
+      message: `Не удалось обновить запись сущности "${
+        ENTITY_NAMES_DICT[options.entity]
+      }`,
+      exception: options.exception,
+    });
+  }
+
+  static cantRemove(options: { entity: EntityType; exception?: Error }) {
+    return ServerError.badRequest({
+      message: `Не удалось удалить запись сущности "${
+        ENTITY_NAMES_DICT[options.entity]
+      }"`,
+      exception: options.exception,
+    });
+  }
+}
