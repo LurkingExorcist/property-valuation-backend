@@ -4,6 +4,10 @@ import * as express from 'express';
 import helmet from 'helmet';
 
 import AccessRightController from '@/domain/access-rights/AccessRight.controller';
+import ApartmentController from '@/domain/apartments/Apartment.controller';
+import CityController from '@/domain/cities/City.controller';
+import UserController from '@/domain/users/User.controller';
+import ViewInWindowController from '@/domain/views-in-window/ViewInWindow.controller';
 
 import { PORT } from '@/config';
 
@@ -30,6 +34,12 @@ export class App {
     this.app.use(cors());
     this.app.use(helmet());
 
-    attachControllers(this.app, [AccessRightController]);
+    attachControllers(this.app, [
+      AccessRightController,
+      ApartmentController,
+      CityController,
+      UserController,
+      ViewInWindowController,
+    ]);
   }
 }

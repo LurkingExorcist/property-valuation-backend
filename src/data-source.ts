@@ -1,12 +1,12 @@
+import 'reflect-metadata';
+
 import { DataSource } from 'typeorm';
 
 import AccessRight from '@/domain/access-rights/AccessRight.model';
 import Apartment from '@/domain/apartments/Apartment.model';
-import AppSection from '@/domain/app-sections/AppSection.model';
+import City from '@/domain/cities/City.model';
 import User from '@/domain/users/User.model';
 import ViewInWindow from '@/domain/views-in-window/ViewInWindow.model';
-
-import 'reflect-metadata';
 
 const AppDataSource = new DataSource({
   type: 'postgres',
@@ -16,7 +16,7 @@ const AppDataSource = new DataSource({
   password: process.env.PG_PASSWORD,
   database: process.env.PG_DATABASE,
   synchronize: true,
-  entities: [AccessRight, Apartment, AppSection, User, ViewInWindow],
+  entities: [AccessRight, Apartment, City, User, ViewInWindow],
   migrations: [],
   subscribers: [],
   // logging: ['query', 'error'],

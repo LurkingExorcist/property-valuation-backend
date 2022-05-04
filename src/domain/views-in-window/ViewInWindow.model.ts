@@ -1,4 +1,5 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { v4 } from 'uuid';
 
 import IModel from '@/interfaces/IModel';
 
@@ -10,12 +11,15 @@ export default class ViewInWindow implements IModel {
   @Column()
   name: string;
 
-  @Column({ default: '-' })
+  @Column()
   description: string;
 
-  static new(name: string) {
+  static new(options: { name: string; description?: string }) {
     const entity = new ViewInWindow();
-    entity.name = name;
+
+    entity.id = v4();
+    entity.name = options.name;
+    entity.description = options.description || '-';
 
     return entity;
   }

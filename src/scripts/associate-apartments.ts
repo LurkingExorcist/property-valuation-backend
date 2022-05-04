@@ -1,3 +1,7 @@
+import 'dotenv/config';
+import 'module-alias/register';
+import _ = require('lodash');
+
 import CsvReader from '@/lib/csv-reader/CsvReader';
 
 import Apartment from '@/domain/apartments/Apartment.model';
@@ -5,7 +9,6 @@ import ViewInWindow from '@/domain/views-in-window/ViewInWindow.model';
 
 import AppDataSource from '@/data-source';
 import { ElementType } from '@/types';
-import _ = require('lodash');
 
 const FILE_PATH = './data-science/out/tables/filtered_apartments.csv';
 const VIEW_COLUMNS = [
@@ -55,13 +58,17 @@ const runAssociation = async (row: ApartmentRecord) => {
     viewNames.map((name) =>
       AppDataSource.manager.findOneBy(ViewInWindow, { name })
     )
+  ).then((entities) =>
+    entities.filter((entity): entity is ViewInWindow => !_.isNil(entity))
   );
+
   const apartment = await AppDataSource.manager.findOne(Apartment, {
     relations: {
       viewsInWindow: true,
+      city: true,
     },
     where: {
-      city: row.city,
+      city: { name: row.city },
       floor: Number(row.floor),
       totalArea: Number(row.total_area),
       livingArea: Number(row.living_area),
@@ -72,6 +79,11 @@ const runAssociation = async (row: ApartmentRecord) => {
       totalPrice: Math.floor(Number(row.total_price)),
     },
   });
+
+  if (!apartment) {
+    console.info(row);
+    throw new Error("Can't find apartment");
+  }
 
   apartment.viewsInWindow = _.unionBy(
     apartment.viewsInWindow,
@@ -92,4 +104,6 @@ const associateApartments = async () => {
   );
 };
 
-export default associateApartments;
+AppDataSource.initialize()
+  .then(associateApartments)
+  .catch((error) => console.error(error));

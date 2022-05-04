@@ -17,12 +17,12 @@ import URLS from '@/lib/app/urls';
 
 import ICrudController from '@/interfaces/ICrudController';
 
-import ViewInWindowService from './ViewInWindow.service';
+import CityService from './City.service';
 
 @Controller(URLS.CITIES)
 @Injectable()
-export default class ViewInWindowController implements ICrudController {
-  constructor(private service: ViewInWindowService) {}
+export default class CityController implements ICrudController {
+  constructor(private service: CityService) {}
 
   @Get('/:id')
   async findById(
@@ -46,13 +46,13 @@ export default class ViewInWindowController implements ICrudController {
     @Body()
     data: {
       name: string;
-      description?: string;
+      region?: string;
     }
   ): Promise<void> {
     await this.service
       .create({
         name: data.name,
-        description: data.description,
+        region: data.region,
       })
       .then((data) => res.json(data));
   }
@@ -64,7 +64,7 @@ export default class ViewInWindowController implements ICrudController {
     @Body()
     data: {
       name: string;
-      description?: string;
+      region?: string;
     }
   ): Promise<void> {
     await this.service
@@ -72,7 +72,7 @@ export default class ViewInWindowController implements ICrudController {
         { id },
         {
           name: data.name,
-          description: data.description,
+          region: data.region,
         }
       )
       .then((data) => res.json(data));

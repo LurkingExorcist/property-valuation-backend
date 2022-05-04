@@ -1,10 +1,11 @@
+import 'dotenv/config';
+import 'module-alias/register';
 import _ = require('lodash');
 
 import AccessRight from '@/domain/access-rights/AccessRight.model';
 import AccessType from '@/domain/access-rights/types/AccessType';
-import AppSection from '@/domain/app-sections/AppSection.model';
+import AppSection from '@/domain/access-rights/types/AppSection';
 
-import { APP_SECTIONS } from '@/config';
 import AppDataSource from '@/data-source';
 
 const generateAccessRights = async () => {
@@ -13,20 +14,14 @@ const generateAccessRights = async () => {
   console.log();
 
   try {
-    const entities = _.keys(APP_SECTIONS).map((sectionName) => {
-      const appSection = AppSection.new({ name: sectionName });
-      const accessRights = _.values(AccessType).map((accessType) => {
+    const entities = _.keys(AppSection).map((appSection) => {
+      return _.values(AccessType).map((accessType) => {
         const accessRight = AccessRight.new({
-          appSection,
+          appSection: appSection as AppSection,
           accessType,
         });
         return accessRight;
       });
-
-      return {
-        appSection,
-        accessRights,
-      };
     });
 
     const queryRunner = AppDataSource.createQueryRunner();
@@ -34,46 +29,27 @@ const generateAccessRights = async () => {
 
     try {
       await Promise.all(
-        entities.map(
-          async ({ appSection, accessRights }, index, { length }) => {
-            const foundAppSection = await queryRunner.manager.findOne(
-              AppSection,
-              {
-                where: {
-                  name: appSection.name,
-                },
-              }
-            );
-
-            if (_.isNull(foundAppSection)) {
-              await queryRunner.manager.save(appSection);
-            }
-
-            appSection = foundAppSection || appSection;
-
-            await Promise.all(
-              accessRights.map(async (entity) => {
-                entity.appSection = appSection;
-
-                const foundAccessRight = await queryRunner.manager.findOne(
-                  AccessRight,
-                  {
-                    where: {
-                      appSection: entity.appSection,
-                      accessType: entity.accessType,
-                    },
-                  }
-                );
-
-                if (_.isNull(foundAccessRight)) {
-                  await queryRunner.manager.save(entity);
+        entities.map(async (accessRights, index, { length }) => {
+          await Promise.all(
+            accessRights.map(async (entity) => {
+              const foundAccessRight = await queryRunner.manager.findOne(
+                AccessRight,
+                {
+                  where: {
+                    appSection: entity.appSection,
+                    accessType: entity.accessType,
+                  },
                 }
-              })
-            );
+              );
 
-            console.info(`${index + 1} of ${length} is saved`);
-          }
-        )
+              if (_.isNull(foundAccessRight)) {
+                await queryRunner.manager.save(entity);
+              }
+            })
+          );
+
+          console.info(`${index + 1} of ${length} is saved`);
+        })
       );
 
       await queryRunner.commitTransaction();
@@ -92,4 +68,6 @@ const generateAccessRights = async () => {
   }
 };
 
-export default generateAccessRights;
+AppDataSource.initialize()
+  .then(generateAccessRights)
+  .catch((error) => console.error(error));

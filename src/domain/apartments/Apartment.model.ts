@@ -3,9 +3,12 @@ import {
   Entity,
   JoinTable,
   ManyToMany,
+  ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { v4 } from 'uuid';
 
+import City from '@/domain/cities/City.model';
 import ViewInWindow from '@/domain/views-in-window/ViewInWindow.model';
 
 import IModel from '@/interfaces/IModel';
@@ -15,8 +18,8 @@ export default class Apartment implements IModel {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
-  city: string;
+  @ManyToOne(() => City)
+  city: City;
 
   @Column('int')
   floor: number;
@@ -47,7 +50,7 @@ export default class Apartment implements IModel {
   viewsInWindow: ViewInWindow[];
 
   static new(options: {
-    city: string;
+    city: City;
     floor: number;
     totalArea: number;
     livingArea: number;
@@ -60,6 +63,7 @@ export default class Apartment implements IModel {
   }) {
     const entity = new Apartment();
 
+    entity.id = v4();
     entity.city = options.city;
     entity.floor = options.floor;
     entity.totalArea = options.totalArea;

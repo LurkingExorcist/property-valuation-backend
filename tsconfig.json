@@ -13,6 +13,8 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "sourceMap": true,
+    "strict": true,
+    "strictPropertyInitialization": false,
     "types": [
       "node"
     ],

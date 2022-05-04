@@ -1,3 +1,5 @@
+import 'dotenv/config';
+import 'module-alias/register';
 import _ = require('lodash');
 import faker from '@faker-js/faker';
 
@@ -31,7 +33,7 @@ const generateUsers = async () => {
           )
           .map(async (user, index, { length }) => {
             await queryRunner.manager.save(user);
-            console.info(`${index+1} of ${length} is saved`);
+            console.info(`${index + 1} of ${length} is saved`);
           })
       );
       await queryRunner.commitTransaction();
@@ -50,4 +52,6 @@ const generateUsers = async () => {
   }
 };
 
-export default generateUsers;
+AppDataSource.initialize()
+  .then(generateUsers)
+  .catch((error) => console.error(error));

@@ -6,6 +6,7 @@ import {
   ManyToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { v4 } from 'uuid';
 
 import IModel from '@/interfaces/IModel';
 
@@ -43,6 +44,7 @@ export default class User implements IModel {
   }) {
     const entity = new User();
 
+    entity.id = v4();
     entity.username = options.username;
     entity.email = options.email;
     entity.phoneNumber = options.phoneNumber;

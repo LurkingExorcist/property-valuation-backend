@@ -1,8 +1,12 @@
+import 'dotenv/config';
+import 'module-alias/register';
+
 import * as _ from 'lodash';
 
 import CsvReader from '@/lib/csv-reader/CsvReader';
 
 import Apartment from '@/domain/apartments/Apartment.model';
+import City from '@/domain/cities/City.model';
 import ViewInWindow from '@/domain/views-in-window/ViewInWindow.model';
 
 import AppDataSource from '@/data-source';
@@ -44,14 +48,16 @@ const recordToEntities = (row: ApartmentRecord) => {
   const viewNames = _(row)
     .entries()
     .filter(
-      ([key, value]) => VIEW_COLUMNS.includes(key as any) && Boolean(+value)
+      ([key, value]) =>
+        VIEW_COLUMNS.includes(
+          key as unknown as ElementType<typeof VIEW_COLUMNS>
+        ) && Boolean(+value)
     )
-    .map(([key, value]) => key)
+    .map(([key]) => key)
     .value();
 
-  const viewsInWindow = viewNames.map(ViewInWindow.new);
   const apartment = Apartment.new({
-    city: row.city,
+    city: City.new({ name: row.city }),
     floor: Number(row.floor),
     totalArea: Number(row.total_area),
     livingArea: Number(row.living_area),
@@ -60,13 +66,10 @@ const recordToEntities = (row: ApartmentRecord) => {
     height: Number(row.height),
     isStudio: Boolean(+row.is_studio),
     totalPrice: Math.floor(Number(row.total_price)),
-    viewsInWindow: [],
+    viewsInWindow: viewNames.map((name) => ViewInWindow.new({ name })),
   });
 
-  return {
-    apartment,
-    viewsInWindow,
-  };
+  return apartment;
 };
 
 const importApartments = async () => {
@@ -82,28 +85,40 @@ const importApartments = async () => {
     });
 
     const foundViews = await AppDataSource.manager.find(ViewInWindow);
+    const foundCities = await AppDataSource.manager.find(City);
 
     const queryRunner = AppDataSource.createQueryRunner();
     await queryRunner.startTransaction();
 
     try {
-      let savedViewsNames: string[] = foundViews.map((view) => view.name);
+      const savedViewsNames: ViewInWindow[] = [...foundViews];
+      const savedCities: City[] = [...foundCities];
+
       const entities = table.map(recordToEntities);
 
       let index = 0;
-      for (const { apartment, viewsInWindow } of entities) {
-        apartment.viewsInWindow = _.unionBy(
-          await queryRunner.manager.save(
-            viewsInWindow.filter((view) => !savedViewsNames.includes(view.name))
-          ),
-          viewsInWindow,
-          (view) => view.name
+      for (const apartment of entities) {
+        apartment.viewsInWindow = apartment.viewsInWindow.map(
+          (entity) =>
+            savedViewsNames.find((view) => view.name === entity.name) || entity
         );
 
-        savedViewsNames = _.union(
-          savedViewsNames,
-          viewsInWindow.map((view) => view.name)
+        const notSavedViews = apartment.viewsInWindow.filter((entity) =>
+          savedViewsNames.find((view) => view.name === entity.name)
         );
+
+        savedViewsNames.push(...notSavedViews);
+        await queryRunner.manager.save(notSavedViews);
+
+        const savedCity = savedCities.find(
+          (city) => city.name === apartment.city.name
+        );
+        apartment.city = savedCity || apartment.city;
+
+        if (!savedCity) {
+          savedCities.push(apartment.city);
+          await queryRunner.manager.save(apartment.city);
+        }
 
         await queryRunner.manager.save(apartment);
         console.info(`${index + 1} of ${entities.length} is saved`);
@@ -127,4 +142,6 @@ const importApartments = async () => {
   }
 };
 
-export default importApartments;
+AppDataSource.initialize()
+  .then(importApartments)
+  .catch((error) => console.error(error));

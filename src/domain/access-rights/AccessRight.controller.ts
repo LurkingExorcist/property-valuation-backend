@@ -15,29 +15,23 @@ import { StatusCodes } from 'http-status-codes';
 
 import URLS from '@/lib/app/urls';
 
-import AppSectionService from '@/domain/app-sections/AppSection.service';
-
 import ICrudController from '@/interfaces/ICrudController';
 
 import AccessType from './types/AccessType';
+import AppSection from './types/AppSection';
 import AccessRightService from './AccessRight.service';
 
 @Controller(URLS.ACCESS_RIGHTS)
 @Injectable()
 export default class AccessRightController implements ICrudController {
-  constructor(
-    private service: AccessRightService,
-    private appSectionService: AppSectionService
-  ) {}
+  constructor(private service: AccessRightService) {}
 
   @Get('/:id')
   async findById(
     @Response() res: express.Response,
     @Params('id') id: string
   ): Promise<void> {
-    await this.service
-      .findById({ id }, { appSection: true })
-      .then((data) => res.json(data));
+    await this.service.findById({ id }).then((data) => res.json(data));
   }
 
   @Get('/')
@@ -45,9 +39,7 @@ export default class AccessRightController implements ICrudController {
     @Response() res: express.Response,
     @Query() query?: Record<string, unknown>
   ): Promise<void> {
-    await this.service
-      .find(query, { appSection: true })
-      .then((data) => res.json(data));
+    await this.service.find(query).then((data) => res.json(data));
   }
 
   @Post('/')
@@ -55,21 +47,15 @@ export default class AccessRightController implements ICrudController {
     @Response() res: express.Response,
     @Body()
     data: {
-      appSectionId: string;
+      appSection: AppSection;
       accessType: AccessType;
     }
   ): Promise<void> {
-    const appSection = await this.appSectionService.findById({
-      id: data.appSectionId,
-    });
     await this.service
-      .create(
-        {
-          appSection,
-          accessType: data.accessType,
-        },
-        { appSection: true }
-      )
+      .create({
+        appSection: data.appSection,
+        accessType: data.accessType,
+      })
       .then((data) => res.json(data));
   }
 
@@ -79,22 +65,17 @@ export default class AccessRightController implements ICrudController {
     @Params('id') id: string,
     @Body()
     data: {
-      appSectionId: string;
+      appSection: AppSection;
       accessType: AccessType;
     }
   ): Promise<void> {
-    const appSection = await this.appSectionService.findById({
-      id: data.appSectionId,
-    });
-
     await this.service
       .update(
         { id },
         {
-          appSection,
+          appSection: data.appSection,
           accessType: data.accessType,
-        },
-        { appSection: true }
+        }
       )
       .then((data) => res.json(data));
   }

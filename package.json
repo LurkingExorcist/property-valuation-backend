@@ -5,11 +5,16 @@
    "type": "commonjs",
    "scripts": {
       "start": "ts-node src/index.ts",
-      "typeorm": "typeorm-ts-node-commonjs"
+      "typeorm": "typeorm-ts-node-commonjs",
+      "associate-apartments": "ts-node src/scripts/associate-apartments.ts",
+      "generate-access-rights": "ts-node src/scripts/generate-access-rights.ts",
+      "generate-users": "ts-node src/scripts/generate-users.ts",
+      "import-apartments": "ts-node src/scripts/import-apartments.ts"
    },
    "dependencies": {
       "@decorators/di": "^1.0.3",
       "@decorators/express": "^2.6.0",
+      "@types/uuid": "^8.3.4",
       "bcrypt": "^5.0.1",
       "cors": "^2.8.5",
       "csv-parse": "^5.0.4",
@@ -19,7 +24,8 @@
       "lodash": "^4.17.21",
       "pg": "^8.4.0",
       "reflect-metadata": "^0.1.13",
-      "typeorm": "0.3.4"
+      "typeorm": "0.3.4",
+      "uuid": "^8.3.2"
    },
    "devDependencies": {
       "@faker-js/faker": "^6.1.1",

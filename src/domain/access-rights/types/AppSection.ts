@@ -1,0 +1,9 @@
+enum AppSection {
+  APARTMENTS = 'APARTMENTS',
+  CITIES = 'CITIES',
+  USERS = 'USERS',
+  VIEWS_IN_WINDOW = 'VIEWS_IN_WINDOW',
+  MACHINE_LEARNING = 'MACHINE_LEARNING',
+}
+
+export default AppSection;

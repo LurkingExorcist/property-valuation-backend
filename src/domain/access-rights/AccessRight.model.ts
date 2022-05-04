@@ -1,17 +1,20 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { v4 } from 'uuid';
 
 import IModel from '@/interfaces/IModel';
 
-import AppSection from '../app-sections/AppSection.model';
-
 import AccessType from './types/AccessType';
+import AppSection from './types/AppSection';
 
 @Entity()
 export default class AccessRight implements IModel {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => AppSection)
+  @Column({
+    type: 'enum',
+    enum: AppSection,
+  })
   appSection: AppSection;
 
   @Column({
@@ -22,6 +25,8 @@ export default class AccessRight implements IModel {
 
   static new(options: { appSection: AppSection; accessType: AccessType }) {
     const entity = new AccessRight();
+
+    entity.id = v4();
     entity.appSection = options.appSection;
     entity.accessType = options.accessType;
 

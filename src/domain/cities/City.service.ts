@@ -2,21 +2,21 @@ import ServerError from '@/lib/server-error/ServerError';
 import _ = require('lodash');
 
 import { Injectable } from '@decorators/di';
-import { FindOptionsRelations } from 'typeorm';
+import { FindOptionsRelations, FindOptionsWhere } from 'typeorm';
 
 import AppDataSource from '@/data-source';
 import ICrudService from '@/interfaces/ICrudService';
 import { EntityType, ParameterOf } from '@/types';
 
-import AccessRight from './AccessRight.model';
+import City from './City.model';
 
 @Injectable()
-export default class AccessRightService implements ICrudService<AccessRight> {
+export default class CityService implements ICrudService<City> {
   async findById(
     query: { id: string },
-    relations?: FindOptionsRelations<AccessRight>
-  ): Promise<AccessRight> {
-    const entity = await AppDataSource.manager.findOne(AccessRight, {
+    relations?: FindOptionsRelations<City>
+  ): Promise<City> {
+    const entity = await AppDataSource.manager.findOne(City, {
       relations,
       where: { id: query.id },
     });
@@ -29,36 +29,36 @@ export default class AccessRightService implements ICrudService<AccessRight> {
   }
 
   find(
-    query: FindOptionsWhere<AccessRight> | FindOptionsWhere<AccessRight>[] = {},
-    relations?: FindOptionsRelations<AccessRight>
-  ): Promise<AccessRight[]> {
-    return AppDataSource.manager.find(AccessRight, {
+    query: FindOptionsWhere<City> | FindOptionsWhere<City>[] = {},
+    relations?: FindOptionsRelations<City>
+  ): Promise<City[]> {
+    return AppDataSource.manager.find(City, {
       relations,
       where: { ...query },
     });
   }
 
   async create(
-    data: ParameterOf<typeof AccessRight['new']>,
-    relations?: FindOptionsRelations<AccessRight>
-  ): Promise<AccessRight> {
+    data: ParameterOf<typeof City['new']>,
+    relations?: FindOptionsRelations<City>
+  ): Promise<City> {
     return AppDataSource.manager
-      .insert(AccessRight, AccessRight.new(data))
+      .insert(City, City.new(data))
       .then((res) => res.identifiers[0].id as string)
       .then((id) => this.findById({ id }, relations));
   }
 
   async update(
     query: { id: string },
-    data: Omit<Partial<AccessRight>, 'id'>,
-    relations?: FindOptionsRelations<AccessRight>
-  ): Promise<AccessRight> {
+    data: Omit<Partial<City>, 'id'>,
+    relations?: FindOptionsRelations<City>
+  ): Promise<City> {
     return AppDataSource.manager
-      .update(AccessRight, query, data)
+      .update(City, query, data)
       .then(() => this.findById({ id: query.id }, relations));
   }
 
   async remove(query: { id: string }): Promise<void> {
-    await AppDataSource.manager.delete(AccessRight, query);
+    await AppDataSource.manager.delete(City, query);
   }
 }

@@ -2,21 +2,21 @@ import ServerError from '@/lib/server-error/ServerError';
 import _ = require('lodash');
 
 import { Injectable } from '@decorators/di';
-import { FindOptionsRelations } from 'typeorm';
+import { FindOptionsRelations, FindOptionsWhere } from 'typeorm';
 
 import AppDataSource from '@/data-source';
 import ICrudService from '@/interfaces/ICrudService';
 import { EntityType, ParameterOf } from '@/types';
 
-import AccessRight from './AccessRight.model';
+import Apartment from './Apartment.model';
 
 @Injectable()
-export default class AccessRightService implements ICrudService<AccessRight> {
+export default class ApartmentService implements ICrudService<Apartment> {
   async findById(
     query: { id: string },
-    relations?: FindOptionsRelations<AccessRight>
-  ): Promise<AccessRight> {
-    const entity = await AppDataSource.manager.findOne(AccessRight, {
+    relations?: FindOptionsRelations<Apartment>
+  ): Promise<Apartment> {
+    const entity = await AppDataSource.manager.findOne(Apartment, {
       relations,
       where: { id: query.id },
     });
@@ -29,36 +29,36 @@ export default class AccessRightService implements ICrudService<AccessRight> {
   }
 
   find(
-    query: FindOptionsWhere<AccessRight> | FindOptionsWhere<AccessRight>[] = {},
-    relations?: FindOptionsRelations<AccessRight>
-  ): Promise<AccessRight[]> {
-    return AppDataSource.manager.find(AccessRight, {
+    query: FindOptionsWhere<Apartment> | FindOptionsWhere<Apartment>[] = {},
+    relations?: FindOptionsRelations<Apartment>
+  ): Promise<Apartment[]> {
+    return AppDataSource.manager.find(Apartment, {
       relations,
       where: { ...query },
     });
   }
 
   async create(
-    data: ParameterOf<typeof AccessRight['new']>,
-    relations?: FindOptionsRelations<AccessRight>
-  ): Promise<AccessRight> {
+    data: ParameterOf<typeof Apartment['new']>,
+    relations?: FindOptionsRelations<Apartment>
+  ): Promise<Apartment> {
     return AppDataSource.manager
-      .insert(AccessRight, AccessRight.new(data))
+      .insert(Apartment, Apartment.new(data))
       .then((res) => res.identifiers[0].id as string)
       .then((id) => this.findById({ id }, relations));
   }
 
   async update(
     query: { id: string },
-    data: Omit<Partial<AccessRight>, 'id'>,
-    relations?: FindOptionsRelations<AccessRight>
-  ): Promise<AccessRight> {
+    data: Omit<Partial<Apartment>, 'id'>,
+    relations?: FindOptionsRelations<Apartment>
+  ): Promise<Apartment> {
     return AppDataSource.manager
-      .update(AccessRight, query, data)
+      .update(Apartment, query, data)
       .then(() => this.findById({ id: query.id }, relations));
   }
 
   async remove(query: { id: string }): Promise<void> {
-    await AppDataSource.manager.delete(AccessRight, query);
+    await AppDataSource.manager.delete(Apartment, query);
   }
 }
