@@ -2,7 +2,7 @@ import ServerError from '@/lib/server-error/ServerError';
 import _ = require('lodash');
 
 import { Injectable } from '@decorators/di';
-import { FindOptionsRelations } from 'typeorm';
+import { FindOptionsRelations, FindOptionsWhere } from 'typeorm';
 
 import AppDataSource from '@/data-source';
 import ICrudService from '@/interfaces/ICrudService';

@@ -1,6 +1,6 @@
 import { StatusCodes } from 'http-status-codes';
 
-import { ENTITY_NAMES_DICT } from '@/config';
+import { ENTITY_NAMES_DICT, IS_DEBUG_MODE } from '@/config';
 import { EntityType } from '@/types';
 
 export default class ServerError {
@@ -18,7 +18,7 @@ export default class ServerError {
     this.status = options.status;
     this.title = options.title;
     this.message = options.message;
-    this.exception = options.exception;
+    this.exception = IS_DEBUG_MODE ? options.exception : undefined;
   }
 
   static badRequest(options: { message: string; exception?: Error }) {
@@ -27,6 +27,23 @@ export default class ServerError {
       title: `Запрос не был выполнен`,
       message: options.message,
       exception: options.exception,
+    });
+  }
+
+  static internalError(options: { message: string; exception?: Error }) {
+    return new ServerError({
+      status: StatusCodes.INTERNAL_SERVER_ERROR,
+      title: `Внутренняя ошибка сервера`,
+      message: options.message,
+      exception: options.exception,
+    });
+  }
+
+  static cantAuthenticate() {
+    return new ServerError({
+      status: StatusCodes.UNAUTHORIZED,
+      title: 'Вход не выполнен',
+      message: 'Неверный логин или пароль',
     });
   }
 

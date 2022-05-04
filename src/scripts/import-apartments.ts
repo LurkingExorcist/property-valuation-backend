@@ -103,12 +103,12 @@ const importApartments = async () => {
             savedViewsNames.find((view) => view.name === entity.name) || entity
         );
 
-        const notSavedViews = apartment.viewsInWindow.filter((entity) =>
-          savedViewsNames.find((view) => view.name === entity.name)
+        const notSavedViews = apartment.viewsInWindow.filter(
+          (entity) => !savedViewsNames.find((view) => view.name === entity.name)
         );
 
-        savedViewsNames.push(...notSavedViews);
         await queryRunner.manager.save(notSavedViews);
+        savedViewsNames.push(...notSavedViews);
 
         const savedCity = savedCities.find(
           (city) => city.name === apartment.city.name
