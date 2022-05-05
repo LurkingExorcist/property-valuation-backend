@@ -3,8 +3,9 @@ module.exports = {
     commonjs: true,
     es2021: true,
     node: true,
+    jest: true,
   },
-  ignorePatterns: ['.eslintrc.js'],
+  ignorePatterns: ['.eslintrc.js', 'jest.config.js'],
   extends: [
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
@@ -20,51 +21,52 @@ module.exports = {
   },
   plugins: ['@typescript-eslint', 'import', 'prettier'],
   rules: {
+    '@typescript-eslint/no-explicit-any': 'off',
     'import/no-unresolved': 'off',
     'import/order': [
       'error',
       {
         'newlines-between': 'always',
-        "pathGroups": [
+        pathGroups: [
           {
-            "pattern": "@/config",
-            "group": "internal",
-            "position": "after"
+            pattern: '@/config',
+            group: 'internal',
+            position: 'after',
           },
           {
-            "pattern": "@/data-source",
-            "group": "internal",
-            "position": "after"
+            pattern: '@/data-source',
+            group: 'internal',
+            position: 'after',
           },
           {
-            "pattern": "@/domain/**",
-            "group": "internal",
-            "position": "after"
+            pattern: '@/domain/**',
+            group: 'internal',
+            position: 'after',
           },
           {
-            "pattern": "@/lib/**",
-            "group": "internal",
-            "position": "after"
+            pattern: '@/lib/**',
+            group: 'internal',
+            position: 'after',
           },
           {
-            "pattern": "@/middlewares/**",
-            "group": "internal",
-            "position": "after"
+            pattern: '@/middlewares/**',
+            group: 'internal',
+            position: 'after',
           },
           {
-            "pattern": "@/interfaces/**",
-            "group": "internal",
-            "position": "after"
+            pattern: '@/interfaces/**',
+            group: 'internal',
+            position: 'after',
           },
           {
-            "pattern": "@/types/**",
-            "group": "internal",
-            "position": "after"
+            pattern: '@/types/**',
+            group: 'internal',
+            position: 'after',
           },
           {
-            "pattern": "@/**",
-            "group": "internal",
-            "position": "after"
+            pattern: '@/**',
+            group: 'internal',
+            position: 'after',
           },
         ],
         groups: [
@@ -79,8 +81,8 @@ module.exports = {
         ],
         alphabetize: {
           order: 'asc',
-          caseInsensitive: false
-        }
+          caseInsensitive: false,
+        },
       },
     ],
   },

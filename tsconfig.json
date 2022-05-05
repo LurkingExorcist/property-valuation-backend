@@ -16,7 +16,8 @@
     "strict": true,
     "strictPropertyInitialization": false,
     "types": [
-      "node"
+      "node",
+      "jest"
     ],
     "paths": {
       "@/*": [
@@ -24,10 +25,10 @@
       ]
     },
     "typeRoots": [
-      "./node_modules/@types",
-      "./src/declarations"
+      "node_modules/@types",
+      "src/declarations"
     ],
     "noEmit": true,
     "diagnostics": false
-  },
+  }
 }

@@ -38,7 +38,7 @@ export default class ViewInWindowService implements ICrudService<ViewInWindow> {
   ): Promise<ViewInWindow[]> {
     return AppDataSource.manager.find(ViewInWindow, {
       relations,
-      where: { ...query },
+      where: query,
     });
   }
 
@@ -47,9 +47,8 @@ export default class ViewInWindowService implements ICrudService<ViewInWindow> {
     relations?: FindOptionsRelations<ViewInWindow>
   ): Promise<ViewInWindow> {
     return AppDataSource.manager
-      .insert(ViewInWindow, ViewInWindow.new(data))
-      .then((res) => res.identifiers[0].id as string)
-      .then((id) => this.findById({ id }, relations));
+      .save(ViewInWindow.new(data))
+      .then((entity) => this.findById({ id: entity.id }, relations));
   }
 
   async update(

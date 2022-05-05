@@ -24,7 +24,7 @@ export default class ApartmentService implements ICrudService<Apartment> {
     });
 
     if (_.isNull(entity)) {
-      throw ServerError.cantFind({ entity: EntityType.ACCESS_RIGHT });
+      throw ServerError.cantFind({ entity: EntityType.APARTMENT });
     }
 
     return entity;
@@ -36,7 +36,7 @@ export default class ApartmentService implements ICrudService<Apartment> {
   ): Promise<Apartment[]> {
     return AppDataSource.manager.find(Apartment, {
       relations,
-      where: { ...query },
+      where: query,
     });
   }
 
@@ -45,9 +45,8 @@ export default class ApartmentService implements ICrudService<Apartment> {
     relations?: FindOptionsRelations<Apartment>
   ): Promise<Apartment> {
     return AppDataSource.manager
-      .insert(Apartment, Apartment.new(data))
-      .then((res) => res.identifiers[0].id as string)
-      .then((id) => this.findById({ id }, relations));
+      .save(Apartment.new(data))
+      .then((entity) => this.findById({ id: entity.id }, relations));
   }
 
   async update(

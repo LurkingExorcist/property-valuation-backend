@@ -26,7 +26,7 @@ export default class AuthenticationService {
     }
 
     return jwt.sign(
-      JSON.parse(JSON.stringify(_.omit(user, 'passwordHash'))),
+      _.toPlainObject(_.omit(user, 'passwordHash')),
       process.env.JWT_SECRET,
       {
         expiresIn: TOKEN_EXPIRES_IN,

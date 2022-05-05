@@ -36,7 +36,7 @@ export default class AccessRightService implements ICrudService<AccessRight> {
   ): Promise<AccessRight[]> {
     return AppDataSource.manager.find(AccessRight, {
       relations,
-      where: { ...query },
+      where: query,
     });
   }
 
@@ -45,9 +45,8 @@ export default class AccessRightService implements ICrudService<AccessRight> {
     relations?: FindOptionsRelations<AccessRight>
   ): Promise<AccessRight> {
     return AppDataSource.manager
-      .insert(AccessRight, AccessRight.new(data))
-      .then((res) => res.identifiers[0].id as string)
-      .then((id) => this.findById({ id }, relations));
+      .save(AccessRight.new(data))
+      .then((entity) => this.findById({ id: entity.id }, relations));
   }
 
   async update(

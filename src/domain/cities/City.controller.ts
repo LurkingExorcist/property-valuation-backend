@@ -13,10 +13,10 @@ import {
 import * as express from 'express';
 import { StatusCodes } from 'http-status-codes';
 
+import { URLS } from '@/config';
+
 import AccessType from '@/domain/access-rights/types/AccessType';
 import AppSection from '@/domain/access-rights/types/AppSection';
-
-import { URLS } from '@/lib/app';
 
 import AccessMiddleware from '@/middlewares/AccessMiddleware';
 import AuthMiddleware from '@/middlewares/AuthMiddleware';

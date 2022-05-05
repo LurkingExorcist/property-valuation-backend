@@ -11,7 +11,7 @@ export default interface ICrudService<T extends IModel> {
     query?: FindOptionsWhere<T> | FindOptionsWhere<T>[],
     relations?: FindOptionsRelations<T>
   ): Promise<T[]>;
-  create(data: Partial<T>, relations?: FindOptionsRelations<T>): Promise<T>;
+  create(data: Partial<T>): Promise<T>;
   update(
     query: { id: string },
     data: Omit<Partial<T>, 'id'>,

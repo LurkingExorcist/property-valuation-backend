@@ -5,5 +5,7 @@ build/
 tmp/
 temp/
 
+coverage
+
 .env
 .test.env

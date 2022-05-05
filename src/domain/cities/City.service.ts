@@ -36,7 +36,7 @@ export default class CityService implements ICrudService<City> {
   ): Promise<City[]> {
     return AppDataSource.manager.find(City, {
       relations,
-      where: { ...query },
+      where: query,
     });
   }
 
@@ -45,9 +45,8 @@ export default class CityService implements ICrudService<City> {
     relations?: FindOptionsRelations<City>
   ): Promise<City> {
     return AppDataSource.manager
-      .insert(City, City.new(data))
-      .then((res) => res.identifiers[0].id as string)
-      .then((id) => this.findById({ id }, relations));
+      .save(City.new(data))
+      .then((entity) => this.findById({ id: entity.id }, relations));
   }
 
   async update(

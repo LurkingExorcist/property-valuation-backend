@@ -36,7 +36,7 @@ export default class UserService implements ICrudService<User> {
   ): Promise<User[]> {
     return AppDataSource.manager.find(User, {
       relations,
-      where: { ...query },
+      where: query,
     });
   }
 
@@ -45,9 +45,8 @@ export default class UserService implements ICrudService<User> {
     relations?: FindOptionsRelations<User>
   ): Promise<User> {
     return AppDataSource.manager
-      .insert(User, User.new(data))
-      .then((res) => res.identifiers[0].id as string)
-      .then((id) => this.findById({ id }, relations));
+      .save(User.new(data))
+      .then((entity) => this.findById({ id: entity.id }, relations));
   }
 
   async update(

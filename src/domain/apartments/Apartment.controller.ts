@@ -14,12 +14,12 @@ import * as express from 'express';
 import { StatusCodes } from 'http-status-codes';
 import _ = require('lodash');
 
+import { URLS } from '@/config';
+
 import AccessType from '@/domain/access-rights/types/AccessType';
 import AppSection from '@/domain/access-rights/types/AppSection';
 import CityService from '@/domain/cities/City.service';
 import ViewInWindowService from '@/domain/views-in-window/ViewInWindow.service';
-
-import { URLS } from '@/lib/app';
 
 import AccessMiddleware from '@/middlewares/AccessMiddleware';
 import AuthMiddleware from '@/middlewares/AuthMiddleware';
@@ -116,7 +116,7 @@ export default class ApartmentController implements ICrudController {
     @Response() res: express.Response,
     @Params('id') id: string,
     @Body()
-    data: {
+    data: Partial<{
       cityId: string;
       viewsInWindowIds: string[];
       floor: number;
@@ -127,21 +127,28 @@ export default class ApartmentController implements ICrudController {
       height: number;
       isStudio: boolean;
       totalPrice: number;
-    }
+    }>
   ): Promise<void> {
-    const city = await this.cityService.findById({ id: data.cityId });
-    const viewsInWindow = await this.viewInWindowService.find(
-      data.viewsInWindowIds.map((id) => ({ id }))
-    );
+    const city = data.cityId
+      ? await this.cityService.findById({ id: data.cityId })
+      : undefined;
+    const viewsInWindow = data.viewsInWindowIds
+      ? await this.viewInWindowService.find(
+          data.viewsInWindowIds.map((id) => ({ id }))
+        )
+      : undefined;
 
     await this.service
       .update(
         { id },
-        {
-          city,
-          viewsInWindow,
-          ..._.omit(data, 'cityId', 'viewsInWindowIds'),
-        },
+        _.omitBy(
+          {
+            city,
+            viewsInWindow,
+            ..._.omit(data, 'cityId', 'viewsInWindowIds'),
+          },
+          _.isNil
+        ),
         { city: true, viewsInWindow: true }
       )
       .then((data) => res.json(data));
