@@ -1,15 +1,14 @@
 import { Container, Injectable, InjectionToken } from '@decorators/di';
+import { Type } from '@decorators/di/lib/src/types';
 import { Middleware } from '@decorators/express';
 import * as express from 'express';
 import _ = require('lodash');
 
-import { Type } from '@decorators/di/lib/src/types';
-
-import ServerError from '@/lib/server-error/ServerError';
-
 import AccessType from '@/domain/access-rights/types/AccessType';
 import AppSection from '@/domain/access-rights/types/AppSection';
 import UserService from '@/domain/users/User.service';
+
+import ServerError from '@/lib/server-error/ServerError';
 
 export default function AccessMiddleware(options: {
   appSection: AppSection;

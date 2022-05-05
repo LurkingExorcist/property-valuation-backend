@@ -1,4 +1,4 @@
-const URLS = Object.freeze({
+export const URLS = Object.freeze({
   ACCESS_RIGHTS: '/access-rights' as const,
   APARTMENTS: '/apartments' as const,
   AUTHENTICATION: '/auth' as const,
@@ -6,5 +6,3 @@ const URLS = Object.freeze({
   USERS: '/users' as const,
   VIEWS_IN_WINDOW: '/views-in-window' as const,
 });
-
-export default URLS;

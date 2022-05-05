@@ -1,12 +1,12 @@
 import { Injectable } from '@decorators/di';
 import * as jwt from 'jsonwebtoken';
-
-import ServerError from '@/lib/server-error/ServerError';
 import _ = require('lodash');
 
 import { TOKEN_EXPIRES_IN } from '@/config';
 
-import UserService from '../users/User.service';
+import UserService from '@/domain/users/User.service';
+
+import ServerError from '@/lib/server-error/ServerError';
 
 @Injectable()
 export default class AuthenticationService {

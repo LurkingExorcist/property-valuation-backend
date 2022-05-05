@@ -14,15 +14,16 @@ import * as express from 'express';
 import { StatusCodes } from 'http-status-codes';
 import _ = require('lodash');
 
-import URLS from '@/lib/app/urls';
+import AccessRightService from '@/domain/access-rights/AccessRight.service';
+import AccessType from '@/domain/access-rights/types/AccessType';
+import AppSection from '@/domain/access-rights/types/AppSection';
 
-import ICrudController from '@/interfaces/ICrudController';
+import { URLS } from '@/lib/app';
+
 import AccessMiddleware from '@/middlewares/AccessMiddleware';
 import AuthMiddleware from '@/middlewares/AuthMiddleware';
 
-import AccessRightService from '../access-rights/AccessRight.service';
-import AccessType from '../access-rights/types/AccessType';
-import AppSection from '../access-rights/types/AppSection';
+import ICrudController from '@/interfaces/ICrudController';
 
 import UserService from './User.service';
 

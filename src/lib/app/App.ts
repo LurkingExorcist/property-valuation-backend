@@ -3,13 +3,14 @@ import * as cors from 'cors';
 import * as express from 'express';
 import helmet from 'helmet';
 
+import { PORT } from '@/config';
+
 import ApartmentController from '@/domain/apartments/Apartment.controller';
 import AuthenticationController from '@/domain/authentication/Authentication.controller';
 import CityController from '@/domain/cities/City.controller';
 import UserController from '@/domain/users/User.controller';
 import ViewInWindowController from '@/domain/views-in-window/ViewInWindow.controller';
 
-import { PORT } from '@/config';
 import ServerErrorMiddleware from '@/middlewares/ServerErrorMiddleware';
 
 export class App {

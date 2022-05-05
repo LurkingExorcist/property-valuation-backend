@@ -9,6 +9,8 @@ module.exports = {
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
     'plugin:prettier/recommended',
+    'plugin:import/recommended',
+    'plugin:import/typescript',
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -16,25 +18,70 @@ module.exports = {
     sourceType: 'module',
     project: 'tsconfig.json',
   },
-  plugins: ['@typescript-eslint', 'simple-import-sort', 'prettier'],
+  plugins: ['@typescript-eslint', 'import', 'prettier'],
   rules: {
-    'simple-import-sort/exports': 'error',
-    'simple-import-sort/imports': [
+    'import/no-unresolved': 'off',
+    'import/order': [
       'error',
       {
-        groups: [
-          ['^\\u0000'],
-          ['^@?\\w'],
-          ['^@/app(/.*|$)'],
-          ['^@/lib(/.*|$)'],
-          ['^@/domain(/.*|$)'],
-          ['^@(/.*|$)'],
-          ['^\\.\\.(?!/?$)', '^\\.\\./?$'],
-          ['^\\./(?=.*/)(?!/?$)', '^\\.(?!/?$)', '^\\./?$'],
-          ['^.+\\.s?css$'],
+        'newlines-between': 'always',
+        "pathGroups": [
+          {
+            "pattern": "@/config",
+            "group": "internal",
+            "position": "after"
+          },
+          {
+            "pattern": "@/data-source",
+            "group": "internal",
+            "position": "after"
+          },
+          {
+            "pattern": "@/domain/**",
+            "group": "internal",
+            "position": "after"
+          },
+          {
+            "pattern": "@/lib/**",
+            "group": "internal",
+            "position": "after"
+          },
+          {
+            "pattern": "@/middlewares/**",
+            "group": "internal",
+            "position": "after"
+          },
+          {
+            "pattern": "@/interfaces/**",
+            "group": "internal",
+            "position": "after"
+          },
+          {
+            "pattern": "@/types/**",
+            "group": "internal",
+            "position": "after"
+          },
+          {
+            "pattern": "@/**",
+            "group": "internal",
+            "position": "after"
+          },
         ],
+        groups: [
+          'builtin',
+          'external',
+          'internal',
+          'object',
+          'sibling',
+          'parent',
+          'type',
+          'index',
+        ],
+        alphabetize: {
+          order: 'asc',
+          caseInsensitive: false
+        }
       },
     ],
-    'sort-imports': 'off',
   },
 };

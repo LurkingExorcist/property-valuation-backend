@@ -2,11 +2,11 @@ import 'dotenv/config';
 import 'module-alias/register';
 import _ = require('lodash');
 
+import AppDataSource from '@/data-source';
+
 import AccessRight from '@/domain/access-rights/AccessRight.model';
 import AccessType from '@/domain/access-rights/types/AccessType';
 import AppSection from '@/domain/access-rights/types/AppSection';
-
-import AppDataSource from '@/data-source';
 
 const generateAccessRights = async () => {
   console.info('GENERATE ACCESS RIGHTS');

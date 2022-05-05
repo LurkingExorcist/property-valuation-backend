@@ -12,21 +12,21 @@ import {
 } from '@decorators/express';
 import * as express from 'express';
 import { StatusCodes } from 'http-status-codes';
-
-import URLS from '@/lib/app/urls';
-
-import ICrudController from '@/interfaces/ICrudController';
-
-import CityService from '../cities/City.service';
-import ViewInWindowService from '../views-in-window/ViewInWindow.service';
-
-import ApartmentService from './Apartment.service';
 import _ = require('lodash');
+
+import AccessType from '@/domain/access-rights/types/AccessType';
+import AppSection from '@/domain/access-rights/types/AppSection';
+import CityService from '@/domain/cities/City.service';
+import ViewInWindowService from '@/domain/views-in-window/ViewInWindow.service';
+
+import { URLS } from '@/lib/app';
+
 import AccessMiddleware from '@/middlewares/AccessMiddleware';
 import AuthMiddleware from '@/middlewares/AuthMiddleware';
 
-import AccessType from '../access-rights/types/AccessType';
-import AppSection from '../access-rights/types/AppSection';
+import ICrudController from '@/interfaces/ICrudController';
+
+import ApartmentService from './Apartment.service';
 
 @Controller(URLS.APARTMENTS, [AuthMiddleware])
 @Injectable()

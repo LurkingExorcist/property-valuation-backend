@@ -1,6 +1,7 @@
 import { StatusCodes } from 'http-status-codes';
 
 import { ENTITY_NAMES_DICT, IS_DEBUG_MODE } from '@/config';
+
 import { EntityType } from '@/types';
 
 export default class ServerError {

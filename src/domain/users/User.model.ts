@@ -8,9 +8,9 @@ import {
 } from 'typeorm';
 import { v4 } from 'uuid';
 
-import IModel from '@/interfaces/IModel';
+import AccessRight from '@/domain/access-rights/AccessRight.model';
 
-import AccessRight from '../access-rights/AccessRight.model';
+import IModel from '@/interfaces/IModel';
 
 const SALT_ROUNDS = 10;
 

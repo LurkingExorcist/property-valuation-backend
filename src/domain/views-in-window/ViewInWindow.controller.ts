@@ -13,14 +13,15 @@ import {
 import * as express from 'express';
 import { StatusCodes } from 'http-status-codes';
 
-import URLS from '@/lib/app/urls';
+import AccessType from '@/domain/access-rights/types/AccessType';
+import AppSection from '@/domain/access-rights/types/AppSection';
 
-import ICrudController from '@/interfaces/ICrudController';
+import { URLS } from '@/lib/app';
+
 import AccessMiddleware from '@/middlewares/AccessMiddleware';
 import AuthMiddleware from '@/middlewares/AuthMiddleware';
 
-import AccessType from '../access-rights/types/AccessType';
-import AppSection from '../access-rights/types/AppSection';
+import ICrudController from '@/interfaces/ICrudController';
 
 import ViewInWindowService from './ViewInWindow.service';
 

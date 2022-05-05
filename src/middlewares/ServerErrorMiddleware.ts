@@ -1,12 +1,12 @@
 import { Container, Injectable } from '@decorators/di';
 import { ERROR_MIDDLEWARE, ErrorMiddleware } from '@decorators/express';
 import * as express from 'express';
-
-import ServerError from '@/lib/server-error/ServerError';
 import _ = require('lodash');
 import { QueryFailedError } from 'typeorm';
 
 import { IS_DEBUG_MODE } from '@/config';
+
+import ServerError from '@/lib/server-error/ServerError';
 
 @Injectable()
 export default class ServerErrorMiddleware implements ErrorMiddleware {

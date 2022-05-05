@@ -2,7 +2,7 @@ import { Injectable } from '@decorators/di';
 import { Body, Controller, Post, Response } from '@decorators/express';
 import * as express from 'express';
 
-import URLS from '@/lib/app/urls';
+import { URLS } from '@/lib/app';
 
 import AuthenticationService from './Authentication.service';
 
