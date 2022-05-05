@@ -4,6 +4,8 @@ import * as jwt from 'jsonwebtoken';
 import ServerError from '@/lib/server-error/ServerError';
 import _ = require('lodash');
 
+import { TOKEN_EXPIRES_IN } from '@/config';
+
 import UserService from '../users/User.service';
 
 @Injectable()
@@ -23,6 +25,12 @@ export default class AuthenticationService {
       });
     }
 
-    return jwt.sign(user, process.env.JWT_SECRET);
+    return jwt.sign(
+      JSON.parse(JSON.stringify(_.omit(user, 'passwordHash'))),
+      process.env.JWT_SECRET,
+      {
+        expiresIn: TOKEN_EXPIRES_IN,
+      }
+    );
   }
 }

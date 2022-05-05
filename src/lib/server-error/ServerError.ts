@@ -39,6 +39,22 @@ export default class ServerError {
     });
   }
 
+  static forbidden() {
+    return new ServerError({
+      status: StatusCodes.FORBIDDEN,
+      title: 'Доступ запрещен',
+      message: 'Не удалось получить доступ к данному разделу',
+    });
+  }
+
+  static tokenExpired() {
+    return new ServerError({
+      status: StatusCodes.UNAUTHORIZED,
+      title: 'Произошел выход из системы',
+      message: 'Время доступа завершено, перезайдите в систему',
+    });
+  }
+
   static cantAuthenticate() {
     return new ServerError({
       status: StatusCodes.UNAUTHORIZED,

@@ -4,7 +4,7 @@
   "description": "Graduation project web-server.",
   "type": "commonjs",
   "scripts": {
-    "start": "ts-node src/index.ts",
+    "start": "ts-node --files src/index.ts",
     "typeorm": "typeorm-ts-node-commonjs",
     "test": "jest --coverage",
     "test:watch": "jest --watch",
@@ -26,7 +26,7 @@
     "lodash": "^4.17.21",
     "pg": "^8.4.0",
     "reflect-metadata": "^0.1.13",
-    "typeorm": "0.3.4",
+    "typeorm": "^0.3.4",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
@@ -50,11 +50,11 @@
     "eslint-plugin-simple-import-sort": "^7.0.0",
     "jest": "^28.0.3",
     "module-alias": "^2.2.2",
-    "prettier": "2.6.1",
+    "prettier": "^2.6.1",
     "supertest": "^6.2.3",
     "ts-jest": "^28.0.1",
-    "ts-node": "10.4.0",
-    "typescript": "4.5.2"
+    "ts-node": "^10.7.0",
+    "typescript": "^4.6.4"
   },
   "_moduleAliases": {
     "@": "src"

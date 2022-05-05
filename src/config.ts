@@ -13,3 +13,5 @@ export const PORT = 3000;
 const DEBUG_ON_VALUE = 1;
 export const IS_DEBUG_MODE =
   Number(process.env.DEBUG || null) === DEBUG_ON_VALUE;
+
+export const TOKEN_EXPIRES_IN = 60 * 60 * 24;

@@ -22,8 +22,13 @@ import ViewInWindowService from '../views-in-window/ViewInWindow.service';
 
 import ApartmentService from './Apartment.service';
 import _ = require('lodash');
+import AccessMiddleware from '@/middlewares/AccessMiddleware';
+import AuthMiddleware from '@/middlewares/AuthMiddleware';
 
-@Controller(URLS.APARTMENTS)
+import AccessType from '../access-rights/types/AccessType';
+import AppSection from '../access-rights/types/AppSection';
+
+@Controller(URLS.APARTMENTS, [AuthMiddleware])
 @Injectable()
 export default class ApartmentController implements ICrudController {
   constructor(
@@ -32,7 +37,12 @@ export default class ApartmentController implements ICrudController {
     private viewInWindowService: ViewInWindowService
   ) {}
 
-  @Get('/:id')
+  @Get('/:id', [
+    AccessMiddleware({
+      appSection: AppSection.APARTMENTS,
+      accessType: AccessType.READ,
+    }),
+  ])
   async findById(
     @Response() res: express.Response,
     @Params('id') id: string
@@ -42,7 +52,12 @@ export default class ApartmentController implements ICrudController {
       .then((data) => res.json(data));
   }
 
-  @Get('/')
+  @Get('/', [
+    AccessMiddleware({
+      appSection: AppSection.APARTMENTS,
+      accessType: AccessType.READ,
+    }),
+  ])
   async find(
     @Response() res: express.Response,
     @Query() query?: Record<string, unknown>
@@ -52,7 +67,12 @@ export default class ApartmentController implements ICrudController {
       .then((data) => res.json(data));
   }
 
-  @Post('/')
+  @Post('/', [
+    AccessMiddleware({
+      appSection: AppSection.APARTMENTS,
+      accessType: AccessType.WRITE,
+    }),
+  ])
   async create(
     @Response() res: express.Response,
     @Body()
@@ -86,7 +106,12 @@ export default class ApartmentController implements ICrudController {
       .then((data) => res.json(data));
   }
 
-  @Put('/:id')
+  @Put('/:id', [
+    AccessMiddleware({
+      appSection: AppSection.APARTMENTS,
+      accessType: AccessType.WRITE,
+    }),
+  ])
   async update(
     @Response() res: express.Response,
     @Params('id') id: string,
@@ -122,7 +147,12 @@ export default class ApartmentController implements ICrudController {
       .then((data) => res.json(data));
   }
 
-  @Delete('/:id')
+  @Delete('/:id', [
+    AccessMiddleware({
+      appSection: AppSection.APARTMENTS,
+      accessType: AccessType.WRITE,
+    }),
+  ])
   async remove(
     @Response() res: express.Response,
     @Params('id') id: string

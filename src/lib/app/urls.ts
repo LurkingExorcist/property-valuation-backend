@@ -1,10 +1,10 @@
 const URLS = Object.freeze({
-  ACCESS_RIGHTS: '/access-rights',
-  APARTMENTS: '/apartments',
-  AUTHENTICATION: '/auth',
-  CITIES: '/cities',
-  USERS: '/users',
-  VIEWS_IN_WINDOW: '/views-in-window',
+  ACCESS_RIGHTS: '/access-rights' as const,
+  APARTMENTS: '/apartments' as const,
+  AUTHENTICATION: '/auth' as const,
+  CITIES: '/cities' as const,
+  USERS: '/users' as const,
+  VIEWS_IN_WINDOW: '/views-in-window' as const,
 });
 
 export default URLS;

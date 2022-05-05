@@ -3,7 +3,6 @@ import * as cors from 'cors';
 import * as express from 'express';
 import helmet from 'helmet';
 
-import AccessRightController from '@/domain/access-rights/AccessRight.controller';
 import ApartmentController from '@/domain/apartments/Apartment.controller';
 import AuthenticationController from '@/domain/authentication/Authentication.controller';
 import CityController from '@/domain/cities/City.controller';
@@ -41,7 +40,6 @@ export class App {
     this.app.use(helmet());
 
     attachControllers(this.app, [
-      AccessRightController,
       ApartmentController,
       AuthenticationController,
       CityController,

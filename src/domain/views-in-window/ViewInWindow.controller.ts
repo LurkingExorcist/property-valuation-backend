@@ -16,15 +16,25 @@ import { StatusCodes } from 'http-status-codes';
 import URLS from '@/lib/app/urls';
 
 import ICrudController from '@/interfaces/ICrudController';
+import AccessMiddleware from '@/middlewares/AccessMiddleware';
+import AuthMiddleware from '@/middlewares/AuthMiddleware';
+
+import AccessType from '../access-rights/types/AccessType';
+import AppSection from '../access-rights/types/AppSection';
 
 import ViewInWindowService from './ViewInWindow.service';
 
-@Controller(URLS.CITIES)
+@Controller(URLS.CITIES, [AuthMiddleware])
 @Injectable()
 export default class ViewInWindowController implements ICrudController {
   constructor(private service: ViewInWindowService) {}
 
-  @Get('/:id')
+  @Get('/:id', [
+    AccessMiddleware({
+      appSection: AppSection.VIEWS_IN_WINDOW,
+      accessType: AccessType.READ,
+    }),
+  ])
   async findById(
     @Response() res: express.Response,
     @Params('id') id: string
@@ -32,7 +42,12 @@ export default class ViewInWindowController implements ICrudController {
     await this.service.findById({ id }).then((data) => res.json(data));
   }
 
-  @Get('/')
+  @Get('/', [
+    AccessMiddleware({
+      appSection: AppSection.VIEWS_IN_WINDOW,
+      accessType: AccessType.READ,
+    }),
+  ])
   async find(
     @Response() res: express.Response,
     @Query() query?: Record<string, unknown>
@@ -40,7 +55,12 @@ export default class ViewInWindowController implements ICrudController {
     await this.service.find(query).then((data) => res.json(data));
   }
 
-  @Post('/')
+  @Post('/', [
+    AccessMiddleware({
+      appSection: AppSection.VIEWS_IN_WINDOW,
+      accessType: AccessType.WRITE,
+    }),
+  ])
   async create(
     @Response() res: express.Response,
     @Body()
@@ -57,7 +77,12 @@ export default class ViewInWindowController implements ICrudController {
       .then((data) => res.json(data));
   }
 
-  @Put('/:id')
+  @Put('/:id', [
+    AccessMiddleware({
+      appSection: AppSection.VIEWS_IN_WINDOW,
+      accessType: AccessType.WRITE,
+    }),
+  ])
   async update(
     @Response() res: express.Response,
     @Params('id') id: string,
@@ -78,7 +103,12 @@ export default class ViewInWindowController implements ICrudController {
       .then((data) => res.json(data));
   }
 
-  @Delete('/:id')
+  @Delete('/:id', [
+    AccessMiddleware({
+      appSection: AppSection.VIEWS_IN_WINDOW,
+      accessType: AccessType.WRITE,
+    }),
+  ])
   async remove(
     @Response() res: express.Response,
     @Params('id') id: string

@@ -23,5 +23,11 @@
         "src/*"
       ]
     },
+    "typeRoots": [
+      "./node_modules/@types",
+      "./src/declarations"
+    ],
+    "noEmit": true,
+    "diagnostics": false
   },
 }
