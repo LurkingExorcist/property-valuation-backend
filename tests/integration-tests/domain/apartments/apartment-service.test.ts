@@ -1,6 +1,6 @@
 import _ = require('lodash');
-import CityMock from 'tests/helpers/CityMock';
-import ViewInWindowMock from 'tests/helpers/ViewInWindowMock';
+import CityMock from 'tests/mocks/CityMock';
+import ViewInWindowMock from 'tests/mocks/ViewInWindowMock';
 import { v4 } from 'uuid';
 
 import AppDataSource from '@/data-source';

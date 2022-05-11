@@ -24,7 +24,7 @@ export default class ViewInWindowService implements ICrudService<ViewInWindow> {
     });
 
     if (_.isNull(entity)) {
-      throw ServerError.cantFind({ entity: EntityType.ACCESS_RIGHT });
+      throw ServerError.cantFind({ entity: EntityType.VIEW_IN_WINDOW });
     }
 
     return entity;

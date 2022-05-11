@@ -24,7 +24,7 @@ export default class CityService implements ICrudService<City> {
     });
 
     if (_.isNull(entity)) {
-      throw ServerError.cantFind({ entity: EntityType.ACCESS_RIGHT });
+      throw ServerError.cantFind({ entity: EntityType.CITY });
     }
 
     return entity;

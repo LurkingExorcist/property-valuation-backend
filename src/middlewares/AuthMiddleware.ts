@@ -19,7 +19,7 @@ export default class AuthMiddleware implements Middleware {
       const bearerToken = request.headers.authorization;
 
       if (_.isNil(bearerToken) || _.isArray(bearerToken)) {
-        throw ServerError.forbidden();
+        throw ServerError.unauthorized();
       }
 
       const { groups } = bearerToken.match(/Bearer (?<token>.+)/) || {};
@@ -39,7 +39,7 @@ export default class AuthMiddleware implements Middleware {
           return next(ServerError.tokenExpired());
         }
 
-        return next(ServerError.forbidden());
+        return next(ServerError.unauthorized());
       }
 
       next(err);

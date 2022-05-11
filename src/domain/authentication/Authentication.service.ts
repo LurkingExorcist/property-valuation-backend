@@ -19,12 +19,6 @@ export default class AuthenticationService {
       throw ServerError.cantAuthenticate();
     }
 
-    if (_.isNil(process.env.JWT_SECRET)) {
-      throw ServerError.internalError({
-        message: 'Невозможно создать jwt-токен',
-      });
-    }
-
     return jwt.sign(
       _.toPlainObject(_.omit(user, 'passwordHash')),
       process.env.JWT_SECRET,

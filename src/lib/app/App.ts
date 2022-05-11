@@ -11,6 +11,7 @@ import CityController from '@/domain/cities/City.controller';
 import UserController from '@/domain/users/User.controller';
 import ViewInWindowController from '@/domain/views-in-window/ViewInWindow.controller';
 
+import NotFoundMiddleware from '@/middlewares/NotFoundMiddleware';
 import ServerErrorMiddleware from '@/middlewares/ServerErrorMiddleware';
 
 export class App {
@@ -25,7 +26,7 @@ export class App {
   }
 
   public listen() {
-    this.app.listen(PORT, () =>
+    return this.app.listen(PORT, () =>
       console.log(`Application is listening on :${PORT}`)
     );
   }
@@ -48,6 +49,7 @@ export class App {
       ViewInWindowController,
     ]);
 
+    this.app.use(middlewareHandler(NotFoundMiddleware));
     this.app.use(middlewareHandler(ServerErrorMiddleware));
   }
 }

@@ -54,8 +54,31 @@ export default class ApartmentService implements ICrudService<Apartment> {
     data: Omit<Partial<Apartment>, 'id'>,
     relations?: FindOptionsRelations<Apartment>
   ): Promise<Apartment> {
+    const { viewsInWindow } = data;
+    const omitedData = _.omit(data, 'viewsInWindow');
+
+    if (!_.isNil(viewsInWindow)) {
+      const apartment = await this.findById({ id: query.id }, relations);
+
+      const actualRelationships = await AppDataSource.getRepository(Apartment)
+        .createQueryBuilder()
+        .relation(Apartment, 'viewsInWindow')
+        .of(apartment)
+        .loadMany();
+
+      await AppDataSource.getRepository(Apartment)
+        .createQueryBuilder()
+        .relation(Apartment, 'viewsInWindow')
+        .of(apartment)
+        .addAndRemove(data.viewsInWindow, actualRelationships);
+
+      if (_.isEmpty(omitedData)) {
+        return this.findById({ id: query.id }, relations);
+      }
+    }
+
     return AppDataSource.manager
-      .update(Apartment, query, data)
+      .update(Apartment, query, _.omit(data, 'viewsInWindow'))
       .then(() => this.findById({ id: query.id }, relations));
   }
 

@@ -1,4 +1,5 @@
 import { Injectable } from '@decorators/di';
+import faker from '@faker-js/faker';
 
 import City from '@/domain/cities/City.model';
 import CityService from '@/domain/cities/City.service';
@@ -13,15 +14,23 @@ export default class CityMock {
   }
 
   public async init() {
-    this.city = await this.cityService.create({
-      name: 'Test',
-      region: 'Test',
+    this.city = await this.loadCity();
+  }
+
+  public loadCity() {
+    return this.cityService.create({
+      name: faker.address.city(),
+      region: faker.address.state(),
     });
   }
 
   public async clear() {
+    await this.removeCity(this.city);
+  }
+
+  private async removeCity(city: City) {
     await this.cityService.remove({
-      id: this.city.id,
+      id: city.id,
     });
   }
 }

@@ -1,6 +1,8 @@
 import * as jwt from 'jsonwebtoken';
 import _ = require('lodash');
 
+import { TOKEN_EXPIRES_IN } from '@/config';
+
 import AccessRight from '@/domain/access-rights/AccessRight.model';
 import AccessRightService from '@/domain/access-rights/AccessRight.service';
 import AccessType from '@/domain/access-rights/types/AccessType';
@@ -39,8 +41,22 @@ export default class UserTokenMock {
     );
   }
 
-  public getToken() {
-    return jwt.sign(_.toPlainObject(this.user), process.env.JWT_SECRET);
+  public getToken(expiresIn: number = TOKEN_EXPIRES_IN) {
+    return jwt.sign(
+      _.toPlainObject(_.omit(this.user, 'passwordHash')),
+      process.env.JWT_SECRET,
+      {
+        expiresIn,
+      }
+    );
+  }
+
+  public getUser() {
+    return this.user;
+  }
+
+  public getPassword() {
+    return 'password';
   }
 
   private async createAccessRights() {
@@ -59,7 +75,7 @@ export default class UserTokenMock {
       username: 'test',
       email: 'test@test.org',
       phoneNumber: '+79995554433',
-      password: 'test',
+      password: this.getPassword(),
       accessRights: this.accessRights,
     });
   }

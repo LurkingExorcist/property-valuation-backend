@@ -39,7 +39,17 @@ export default class ServerErrorMiddleware implements ErrorMiddleware {
           }),
       ],
       [
-        _.stubFalse,
+        _.isObject,
+        (err) =>
+          ServerError.internalError({
+            message: 'Неизвестная ошибка',
+            exception: new Error(
+              _.toString((<Record<string, any>>err).message)
+            ),
+          }),
+      ],
+      [
+        _.stubTrue,
         (err) =>
           ServerError.internalError({
             message: 'Неизвестная ошибка',

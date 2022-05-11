@@ -25,7 +25,7 @@ import ICrudController from '@/interfaces/ICrudController';
 
 import ViewInWindowService from './ViewInWindow.service';
 
-@Controller(URLS.CITIES, [AuthMiddleware])
+@Controller(URLS.VIEWS_IN_WINDOW, [AuthMiddleware])
 @Injectable()
 export default class ViewInWindowController implements ICrudController {
   constructor(private service: ViewInWindowService) {}

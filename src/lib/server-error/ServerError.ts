@@ -19,7 +19,18 @@ export default class ServerError {
     this.status = options.status;
     this.title = options.title;
     this.message = options.message;
-    this.exception = IS_DEBUG_MODE ? options.exception : undefined;
+
+    if (IS_DEBUG_MODE) {
+      this.exception = options.exception;
+    }
+  }
+
+  static notFound(options: { method: string; route: string }) {
+    return new ServerError({
+      status: StatusCodes.NOT_FOUND,
+      title: `Не найдено`,
+      message: `Невозможно выполнить метод ${options.method} ${options.route}`,
+    });
   }
 
   static badRequest(options: { message: string; exception?: Error }) {
@@ -45,6 +56,14 @@ export default class ServerError {
       status: StatusCodes.FORBIDDEN,
       title: 'Доступ запрещен',
       message: 'Не удалось получить доступ к данному разделу',
+    });
+  }
+
+  static unauthorized() {
+    return new ServerError({
+      status: StatusCodes.UNAUTHORIZED,
+      title: 'Доступ запрещен',
+      message: 'Необходимо авторизоваться',
     });
   }
 

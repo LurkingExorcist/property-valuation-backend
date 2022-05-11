@@ -24,7 +24,7 @@ export default class UserService implements ICrudService<User> {
     });
 
     if (_.isNull(entity)) {
-      throw ServerError.cantFind({ entity: EntityType.ACCESS_RIGHT });
+      throw ServerError.cantFind({ entity: EntityType.USER });
     }
 
     return entity;
@@ -54,8 +54,31 @@ export default class UserService implements ICrudService<User> {
     data: Omit<Partial<User>, 'id'>,
     relations?: FindOptionsRelations<User>
   ): Promise<User> {
+    const { accessRights } = data;
+    const omitedData = _.omit(data, 'accessRights');
+
+    if (!_.isNil(accessRights)) {
+      const user = await this.findById({ id: query.id }, relations);
+
+      const actualRelationships = await AppDataSource.getRepository(User)
+        .createQueryBuilder()
+        .relation(User, 'accessRights')
+        .of(user)
+        .loadMany();
+
+      await AppDataSource.getRepository(User)
+        .createQueryBuilder()
+        .relation(User, 'accessRights')
+        .of(user)
+        .addAndRemove(data.accessRights, actualRelationships);
+
+      if (_.isEmpty(omitedData)) {
+        return this.findById({ id: query.id }, relations);
+      }
+    }
+
     return AppDataSource.manager
-      .update(User, query, data)
+      .update(User, query, omitedData)
       .then(() => this.findById({ id: query.id }, relations));
   }
 

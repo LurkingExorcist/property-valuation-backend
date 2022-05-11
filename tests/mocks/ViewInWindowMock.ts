@@ -1,6 +1,6 @@
 import { Injectable } from '@decorators/di';
+import faker from '@faker-js/faker';
 import _ = require('lodash');
-import { v4 } from 'uuid';
 
 import ViewInWindow from '@/domain/views-in-window/ViewInWindow.model';
 import ViewInWindowService from '@/domain/views-in-window/ViewInWindow.service';
@@ -15,18 +15,26 @@ export default class ViewInWindowMock {
   }
 
   public async init() {
-    this.views = await Promise.all(
+    this.views = await this.loadViewsInWindow();
+  }
+
+  public loadViewsInWindow() {
+    return Promise.all(
       _.range(5).map(() =>
         this.viewService.create({
-          name: v4(),
+          name: faker.lorem.word(),
         })
       )
     );
   }
 
   public async clear() {
+    await this.removeViewsInWindow(this.views);
+  }
+
+  private async removeViewsInWindow(views: ViewInWindow[]) {
     await Promise.all(
-      this.views.map((view) => this.viewService.remove({ id: view.id }))
+      views.map((view) => this.viewService.remove({ id: view.id }))
     );
   }
 }

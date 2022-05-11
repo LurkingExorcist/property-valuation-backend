@@ -84,9 +84,11 @@ export default class UserController implements ICrudController {
       password: string;
     }
   ): Promise<void> {
-    const accessRights = await this.accessRightService.find(
-      data.accessRightsIds.map((id) => ({ id }))
-    );
+    const accessRights = data.accessRightsIds
+      ? await this.accessRightService.find(
+          data.accessRightsIds.map((id) => ({ id }))
+        )
+      : [];
 
     await this.service
       .create(
@@ -109,17 +111,19 @@ export default class UserController implements ICrudController {
     @Response() res: express.Response,
     @Params('id') id: string,
     @Body()
-    data: {
+    data: Partial<{
       accessRightsIds: string[];
       username: string;
       email: string;
       phoneNumber: string;
       password: string;
-    }
+    }>
   ): Promise<void> {
-    const accessRights = await this.accessRightService.find(
-      data.accessRightsIds.map((id) => ({ id }))
-    );
+    const accessRights = data.accessRightsIds
+      ? await this.accessRightService.find(
+          data.accessRightsIds.map((id) => ({ id }))
+        )
+      : undefined;
 
     await this.service
       .update(

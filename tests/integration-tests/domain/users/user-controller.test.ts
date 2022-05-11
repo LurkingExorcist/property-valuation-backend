@@ -1,11 +1,11 @@
 import 'jest';
+import faker from '@faker-js/faker';
 import * as express from 'express';
 import { StatusCodes } from 'http-status-codes';
 import _ = require('lodash');
 import * as request from 'supertest';
-import CityMock from 'tests/mocks/CityMock';
+import AccessRightsMock from 'tests/mocks/AccessRightsMock';
 import UserTokenMock from 'tests/mocks/UserTokenMock';
-import ViewInWindowMock from 'tests/mocks/ViewInWindowMock';
 
 import { URLS } from '@/config';
 
@@ -13,26 +13,25 @@ import AppDataSource from '@/data-source';
 
 import AccessType from '@/domain/access-rights/types/AccessType';
 import AppSection from '@/domain/access-rights/types/AppSection';
-import Apartment from '@/domain/apartments/Apartment.model';
+import User from '@/domain/users/User.model';
 
 import { App } from '@/lib/app';
 
 console.error = jest.fn();
 
-describe(URLS.APARTMENTS, () => {
+describe(URLS.USERS, () => {
   const userRightlessMock = new UserTokenMock({
-    section: AppSection.APARTMENTS,
+    section: AppSection.CITIES,
     rights: [],
   });
   const userMock = new UserTokenMock({
-    section: AppSection.APARTMENTS,
+    section: AppSection.USERS,
     rights: [AccessType.READ, AccessType.WRITE],
   });
-  const cityMock = new CityMock();
-  const viewInWindowMock = new ViewInWindowMock();
+  const accessRightsMock = new AccessRightsMock();
 
   let testQuery: Record<string, any>;
-  let testEntity: Apartment;
+  let testEntity: User;
 
   let app: express.Application;
   let testToken: string;
@@ -41,38 +40,31 @@ describe(URLS.APARTMENTS, () => {
     await AppDataSource.initialize();
     await userMock.init();
     await userRightlessMock.init();
-    await cityMock.init();
-    await viewInWindowMock.init();
+    await accessRightsMock.init();
 
     testToken = userMock.getToken();
     app = App.init().getApp();
 
     testQuery = {
-      cityId: cityMock.getCity().id,
-      viewsInWindowIds: viewInWindowMock
-        .getViewsInWindow()
+      username: faker.internet.userName(),
+      email: faker.internet.email(),
+      phoneNumber: faker.phone.phoneNumber('+7 (900) ###-##-##'),
+      password: faker.internet.password(),
+      accessRightsIds: accessRightsMock
+        .getAccessRights()
         .map((view) => view.id),
-      floor: _.random(42),
-      totalArea: _.random(42),
-      livingArea: _.random(42),
-      kitchenArea: _.random(42),
-      roomCount: _.random(42),
-      height: _.random(42),
-      isStudio: Boolean(_.random()),
-      totalPrice: _.random(1_000_000, 100_000_000),
     };
   });
 
   afterAll(async () => {
     await userMock.clear();
     await userRightlessMock.clear();
-    await cityMock.clear();
-    await viewInWindowMock.clear();
+    await accessRightsMock.clear();
   });
 
   it('/ should return unauthorized is not provided', async () => {
     await request(app)
-      .get(URLS.APARTMENTS)
+      .get(URLS.USERS)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
       .expect(StatusCodes.UNAUTHORIZED);
@@ -80,7 +72,7 @@ describe(URLS.APARTMENTS, () => {
 
   it('/ should return unauthorized if token is wrong', async () => {
     await request(app)
-      .get(URLS.APARTMENTS)
+      .get(URLS.USERS)
       .set('Authorization', `Bearer 42`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
@@ -89,7 +81,7 @@ describe(URLS.APARTMENTS, () => {
 
   it('/ should return unauthorized if token is expired', async () => {
     await request(app)
-      .get(URLS.APARTMENTS)
+      .get(URLS.USERS)
       .set('Authorization', `Bearer ${userMock.getToken(0)}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
@@ -98,7 +90,7 @@ describe(URLS.APARTMENTS, () => {
 
   it('POST / should return forbidden if user have no write right', async () => {
     await request(app)
-      .post(URLS.APARTMENTS)
+      .post(URLS.USERS)
       .set('Authorization', `Bearer ${userRightlessMock.getToken()}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
@@ -107,7 +99,7 @@ describe(URLS.APARTMENTS, () => {
 
   it('POST /', (done) => {
     request(app)
-      .post(URLS.APARTMENTS)
+      .post(URLS.USERS)
       .set('Authorization', `Bearer ${testToken}`)
       .set('Accept', 'application/json')
       .send(testQuery)
@@ -118,7 +110,26 @@ describe(URLS.APARTMENTS, () => {
 
         testEntity = res.body;
         expect(res.body).toMatchObject(
-          _.omit(testQuery, 'cityId', 'viewsInWindowIds')
+          _.omit(testQuery, 'accessRightsIds', 'password')
+        );
+        done();
+      });
+  });
+
+  it('POST / without accessRightsIds', (done) => {
+    request(app)
+      .post(URLS.USERS)
+      .set('Authorization', `Bearer ${testToken}`)
+      .set('Accept', 'application/json')
+      .send(_.omit(testQuery, 'accessRightsIds'))
+      .expect('Content-Type', /json/)
+      .expect(StatusCodes.OK)
+      .end((err, res) => {
+        if (err) return done(err);
+
+        testEntity = res.body;
+        expect(res.body).toMatchObject(
+          _.omit(testQuery, 'accessRightsIds', 'password')
         );
         done();
       });
@@ -126,7 +137,7 @@ describe(URLS.APARTMENTS, () => {
 
   it('GET / should return forbidden if user have no read right', async () => {
     await request(app)
-      .get(URLS.APARTMENTS)
+      .get(URLS.USERS)
       .set('Authorization', `Bearer ${userRightlessMock.getToken()}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
@@ -135,14 +146,14 @@ describe(URLS.APARTMENTS, () => {
 
   it('GET /', (done) => {
     request(app)
-      .get(URLS.APARTMENTS)
+      .get(URLS.USERS)
       .set('Authorization', `Bearer ${testToken}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
       .expect(StatusCodes.OK)
       .end((err, res) => {
         if (err) return done(err);
-        const data: Apartment[] = res.body;
+        const data: User[] = res.body;
 
         expect(data).toBeInstanceOf(Array);
 
@@ -152,7 +163,7 @@ describe(URLS.APARTMENTS, () => {
 
   it('GET /:id should return forbidden if user have no read right', async () => {
     await request(app)
-      .get(`${URLS.APARTMENTS}/${testEntity.id}`)
+      .get(`${URLS.USERS}/${testEntity.id}`)
       .set('Authorization', `Bearer ${userRightlessMock.getToken()}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
@@ -161,7 +172,7 @@ describe(URLS.APARTMENTS, () => {
 
   it('GET /:id', (done) => {
     request(app)
-      .get(`${URLS.APARTMENTS}/${testEntity.id}`)
+      .get(`${URLS.USERS}/${testEntity.id}`)
       .set('Authorization', `Bearer ${testToken}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
@@ -169,22 +180,17 @@ describe(URLS.APARTMENTS, () => {
       .end((err, res) => {
         if (err) return done(err);
 
-        const data: Apartment = res.body;
+        const data: User = res.body;
         expect(data).toMatchObject(testEntity);
 
         done();
       });
   });
 
-  it('PUT /:id should return forbidden if user have no write right', async () => {
-    const updateData = {
-      floor: _.random(42),
-    };
-
+  it('PUT /:id should return forbidden if user have no read right', async () => {
     await request(app)
-      .put(`${URLS.APARTMENTS}/${testEntity.id}`)
+      .put(`${URLS.USERS}/${testEntity.id}`)
       .set('Authorization', `Bearer ${userRightlessMock.getToken()}`)
-      .send(updateData)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
       .expect(StatusCodes.FORBIDDEN);
@@ -192,18 +198,13 @@ describe(URLS.APARTMENTS, () => {
 
   it('PUT /:id', (done) => {
     const updateData = {
-      floor: _.random(42),
-      totalArea: _.random(42),
-      livingArea: _.random(42),
-      kitchenArea: _.random(42),
-      roomCount: _.random(42),
-      height: _.random(42),
-      isStudio: Boolean(_.random()),
-      totalPrice: _.random(1_000_000, 100_000_000),
+      username: faker.internet.userName(),
+      email: faker.internet.email(),
+      phoneNumber: faker.phone.phoneNumber('+7 (900) ###-##-##'),
     };
 
     request(app)
-      .put(`${URLS.APARTMENTS}/${testEntity.id}`)
+      .put(`${URLS.USERS}/${testEntity.id}`)
       .set('Authorization', `Bearer ${testToken}`)
       .set('Accept', 'application/json')
       .send(updateData)
@@ -212,31 +213,26 @@ describe(URLS.APARTMENTS, () => {
       .end((err, res) => {
         if (err) return done(err);
 
-        const instance: Apartment = res.body;
-        expect(instance.floor).toBe(updateData.floor);
-        expect(instance.totalArea).toBe(updateData.totalArea);
-        expect(instance.livingArea).toBe(updateData.livingArea);
-        expect(instance.kitchenArea).toBe(updateData.kitchenArea);
-        expect(instance.roomCount).toBe(updateData.roomCount);
-        expect(instance.height).toBe(updateData.height);
-        expect(instance.isStudio).toBe(updateData.isStudio);
-        expect(instance.totalPrice).toBe(updateData.totalPrice);
+        const instance: User = res.body;
+        expect(instance.username).toBe(updateData.username);
+        expect(instance.email).toBe(updateData.email);
+        expect(instance.phoneNumber).toBe(updateData.phoneNumber);
 
         done();
       });
   });
 
-  it('PUT /:id with cityId', (done) => {
-    cityMock
-      .loadCity()
-      .then((city) => {
+  it('PUT /:id with accessRightsIds', (done) => {
+    accessRightsMock
+      .loadAccessRights()
+      .then((accessRights) => {
         const updateData = {
-          cityId: city.id,
+          accessRightsIds: accessRights.map((accessRight) => accessRight.id),
         };
 
         return new Promise<void>((resolve, reject) => {
           request(app)
-            .put(`${URLS.APARTMENTS}/${testEntity.id}`)
+            .put(`${URLS.USERS}/${testEntity.id}`)
             .set('Authorization', `Bearer ${testToken}`)
             .set('Accept', 'application/json')
             .send(updateData)
@@ -246,46 +242,12 @@ describe(URLS.APARTMENTS, () => {
               try {
                 if (err) return done(err);
 
-                const instance: Apartment = res.body;
-                expect(instance.city).toMatchObject(city);
-
-                resolve();
-              } catch (err) {
-                reject(err);
-              }
-            });
-        });
-      })
-      .then(done)
-      .catch(done);
-  });
-
-  it('PUT /:id with viewsInWindowIds', (done) => {
-    viewInWindowMock
-      .loadViewsInWindow()
-      .then((viewsInWindow) => {
-        const updateData = {
-          viewsInWindowIds: viewsInWindow.map((view) => view.id),
-        };
-
-        return new Promise<void>((resolve, reject) => {
-          request(app)
-            .put(`${URLS.APARTMENTS}/${testEntity.id}`)
-            .set('Authorization', `Bearer ${testToken}`)
-            .set('Accept', 'application/json')
-            .send(updateData)
-            .expect('Content-Type', /json/)
-            .expect(StatusCodes.OK)
-            .end((err, res) => {
-              try {
-                if (err) return done(err);
-
-                const instance: Apartment = res.body;
-
-                instance.viewsInWindow.forEach((view) => {
-                  expect(view).toMatchObject(
-                    viewsInWindow.find(
-                      (foundView) => foundView.id === view.id
+                const instance: User = res.body;
+                instance.accessRights.forEach((accessRight) => {
+                  expect(accessRight).toMatchObject(
+                    accessRights.find(
+                      (foundAccessRight) =>
+                        foundAccessRight.id === accessRight.id
                     ) || {}
                   );
                 });
@@ -301,9 +263,9 @@ describe(URLS.APARTMENTS, () => {
       .catch(done);
   });
 
-  it('DELETE /:id should return forbidden if user have no write right', async () => {
+  it('DELETE /:id should return forbidden if user have no read right', async () => {
     await request(app)
-      .delete(`${URLS.APARTMENTS}/${testEntity.id}`)
+      .delete(`${URLS.USERS}/${testEntity.id}`)
       .set('Authorization', `Bearer ${userRightlessMock.getToken()}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
@@ -312,7 +274,7 @@ describe(URLS.APARTMENTS, () => {
 
   it('DELETE /:id', (done) => {
     request(app)
-      .delete(`${URLS.APARTMENTS}/${testEntity.id}`)
+      .delete(`${URLS.USERS}/${testEntity.id}`)
       .set('Authorization', `Bearer ${testToken}`)
       .expect(StatusCodes.OK)
       .end(() => done());
