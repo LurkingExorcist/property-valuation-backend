@@ -1,8 +1,17 @@
 import { Injectable } from '@decorators/di';
-import { Body, Controller, Post, Response } from '@decorators/express';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Request,
+  Response,
+} from '@decorators/express';
 import * as express from 'express';
 
 import { URLS } from '@/config';
+
+import AuthMiddleware from '@/middlewares/AuthMiddleware';
 
 import AuthenticationService from './Authentication.service';
 
@@ -25,5 +34,13 @@ export default class AuthenticationController {
         token,
       })
     );
+  }
+
+  @Get('/me', [AuthMiddleware])
+  async me(
+    @Request() req: express.Request,
+    @Response() res: express.Response
+  ): Promise<void> {
+    res.json(req.user);
   }
 }

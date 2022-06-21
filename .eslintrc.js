@@ -34,11 +34,6 @@ module.exports = {
             position: 'after',
           },
           {
-            pattern: '@/data-source',
-            group: 'internal',
-            position: 'after',
-          },
-          {
             pattern: '@/domain/**',
             group: 'internal',
             position: 'after',

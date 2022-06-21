@@ -8,7 +8,7 @@ export const ENTITY_NAMES_DICT = Object.freeze({
   [EntityType.VIEW_IN_WINDOW]: 'Вид из окна',
 });
 
-export const PORT = 3000;
+export const PORT = 8080;
 
 const DEBUG_ON_VALUE = 1;
 export const IS_DEBUG_MODE =

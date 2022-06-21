@@ -2,6 +2,7 @@ library("dplyr")
 library("stringr")
 library("corrplot")
 library("broom")
+library("xlsx")
 
 dir.create("out/tables", showWarnings = FALSE)
 dir.create("out/plots", showWarnings = FALSE)
@@ -36,6 +37,8 @@ dataset <- read.table(
     "total_price"
   )
 )
+
+sample_n(dataset, 80) %>% write.xlsx('out/tables/data_slice.xlsx')
 
 dataset$city <- as.factor(dataset$city)
 

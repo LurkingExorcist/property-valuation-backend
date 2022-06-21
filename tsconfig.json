@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "traceResolution": true,
     "lib": [
       "es5",
       "es6"
@@ -28,7 +27,6 @@
       "node_modules/@types",
       "src/declarations"
     ],
-    "noEmit": true,
-    "diagnostics": false
+    "noEmit": true
   }
 }
