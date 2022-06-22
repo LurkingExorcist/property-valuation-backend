@@ -1,4 +1,6 @@
-import { FindOptionsRelations, FindOptionsWhere } from 'typeorm';
+import { FindOptionsRelations } from 'typeorm';
+
+import { FindQuery, PaginatedData } from '@/types';
 
 import IModel from './IModel';
 
@@ -8,9 +10,9 @@ export default interface ICrudService<T extends IModel> {
     relations?: FindOptionsRelations<T>
   ): Promise<T>;
   find(
-    query?: FindOptionsWhere<T> | FindOptionsWhere<T>[],
+    query?: FindQuery<T>,
     relations?: FindOptionsRelations<T>
-  ): Promise<T[]>;
+  ): Promise<PaginatedData<T>>;
   create(data: Partial<T>): Promise<T>;
   update(
     query: { id: string },

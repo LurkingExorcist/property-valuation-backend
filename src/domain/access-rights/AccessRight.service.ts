@@ -1,14 +1,14 @@
 import { Injectable } from '@decorators/di';
 import _ = require('lodash');
-import { FindOptionsRelations, FindOptionsWhere } from 'typeorm';
-
-import AppDataSource from '@/data-source';
+import { FindOptionsRelations } from 'typeorm';
 
 import ServerError from '@/lib/server-error/ServerError';
+import { sortModelToOrder } from '@/lib/utils';
 
 import ICrudService from '@/interfaces/ICrudService';
 
-import { EntityType, ParameterOf } from '@/types';
+import AppDataSource from '@/data-source';
+import { EntityType, FindQuery, PaginatedData, ParameterOf } from '@/types';
 
 import AccessRight from './AccessRight.model';
 
@@ -30,14 +30,22 @@ export default class AccessRightService implements ICrudService<AccessRight> {
     return entity;
   }
 
-  find(
-    query: FindOptionsWhere<AccessRight> | FindOptionsWhere<AccessRight>[] = {},
+  async find(
+    query: FindQuery<AccessRight> = {},
     relations?: FindOptionsRelations<AccessRight>
-  ): Promise<AccessRight[]> {
-    return AppDataSource.manager.find(AccessRight, {
-      relations,
-      where: query,
-    });
+  ): Promise<PaginatedData<AccessRight>> {
+    const [content, total] = await AppDataSource.manager.findAndCount(
+      AccessRight,
+      {
+        relations,
+        where: query.where,
+        take: query.pageSize,
+        skip: (query.pageIndex || 0) * (query.pageSize || 0),
+        order: sortModelToOrder(query.sort),
+      }
+    );
+
+    return { content, total };
   }
 
   async create(

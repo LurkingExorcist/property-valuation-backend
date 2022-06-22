@@ -90,9 +90,9 @@ export default class ApartmentController implements ICrudController {
     }
   ): Promise<void> {
     const city = await this.cityService.findById({ id: data.cityId });
-    const viewsInWindow = await this.viewInWindowService.find(
-      data.viewsInWindowIds.map((id) => ({ id }))
-    );
+    const { content: viewsInWindow } = await this.viewInWindowService.find({
+      where: data.viewsInWindowIds.map((id) => ({ id })),
+    });
 
     await this.service
       .create(
@@ -133,9 +133,9 @@ export default class ApartmentController implements ICrudController {
       ? await this.cityService.findById({ id: data.cityId })
       : undefined;
     const viewsInWindow = data.viewsInWindowIds
-      ? await this.viewInWindowService.find(
-          data.viewsInWindowIds.map((id) => ({ id }))
-        )
+      ? await this.viewInWindowService.find({
+          where: data.viewsInWindowIds.map((id) => ({ id })),
+        })
       : undefined;
 
     await this.service

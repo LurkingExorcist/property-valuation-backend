@@ -1,14 +1,14 @@
 import { Injectable } from '@decorators/di';
 import _ = require('lodash');
-import { FindOptionsRelations, FindOptionsWhere } from 'typeorm';
-
-import AppDataSource from '@/data-source';
+import { FindOptionsRelations } from 'typeorm';
 
 import ServerError from '@/lib/server-error/ServerError';
+import { sortModelToOrder } from '@/lib/utils';
 
 import ICrudService from '@/interfaces/ICrudService';
 
-import { EntityType, ParameterOf } from '@/types';
+import AppDataSource from '@/data-source';
+import { EntityType, FindQuery, PaginatedData, ParameterOf } from '@/types';
 
 import City from './City.model';
 
@@ -30,14 +30,19 @@ export default class CityService implements ICrudService<City> {
     return entity;
   }
 
-  find(
-    query: FindOptionsWhere<City> | FindOptionsWhere<City>[] = {},
+  async find(
+    query: FindQuery<City> = {},
     relations?: FindOptionsRelations<City>
-  ): Promise<City[]> {
-    return AppDataSource.manager.find(City, {
+  ): Promise<PaginatedData<City>> {
+    const [content, total] = await AppDataSource.manager.findAndCount(City, {
       relations,
-      where: query,
+      where: query.where,
+      take: query.pageSize,
+      skip: (query.pageIndex || 0) * (query.pageSize || 0),
+      order: sortModelToOrder(query.sort),
     });
+
+    return { content, total };
   }
 
   async create(

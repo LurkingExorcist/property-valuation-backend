@@ -60,11 +60,12 @@ export default class UserController implements ICrudController {
     @Response() res: express.Response,
     @Query() query?: Record<string, unknown>
   ): Promise<void> {
-    await this.service
-      .find(query, { accessRights: true })
-      .then((data) =>
-        res.json(data.map((user) => _.omit(user, 'passwordHash')))
-      );
+    await this.service.find(query, { accessRights: true }).then((data) =>
+      res.json({
+        ...data,
+        content: data.content.map((user) => _.omit(user, 'passwordHash')),
+      })
+    );
   }
 
   @Post('/', [
@@ -84,11 +85,11 @@ export default class UserController implements ICrudController {
       password: string;
     }
   ): Promise<void> {
-    const accessRights = data.accessRightsIds
-      ? await this.accessRightService.find(
-          data.accessRightsIds.map((id) => ({ id }))
-        )
-      : [];
+    const { content: accessRights } = data.accessRightsIds
+      ? await this.accessRightService.find({
+          where: data.accessRightsIds.map((id) => ({ id })),
+        })
+      : { content: [] };
 
     await this.service
       .create(
@@ -119,11 +120,11 @@ export default class UserController implements ICrudController {
       password: string;
     }>
   ): Promise<void> {
-    const accessRights = data.accessRightsIds
-      ? await this.accessRightService.find(
-          data.accessRightsIds.map((id) => ({ id }))
-        )
-      : undefined;
+    const { content: accessRights } = data.accessRightsIds
+      ? await this.accessRightService.find({
+          where: data.accessRightsIds.map((id) => ({ id })),
+        })
+      : { content: [] };
 
     await this.service
       .update(

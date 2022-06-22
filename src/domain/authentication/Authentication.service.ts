@@ -13,7 +13,11 @@ export default class AuthenticationService {
   constructor(private userService: UserService) {}
 
   async signin(query: { username: string; password: string }) {
-    const [user] = await this.userService.find({ username: query.username });
+    const {
+      content: [user],
+    } = await this.userService.find({
+      where: { username: query.username },
+    });
 
     if (_.isNil(user) || !user.checkPassword(query.password)) {
       throw ServerError.cantAuthenticate();
