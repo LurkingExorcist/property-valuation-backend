@@ -21,11 +21,16 @@ import AppSection from '@/domain/access-rights/types/AppSection';
 import CityService from '@/domain/cities/City.service';
 import ViewInWindowService from '@/domain/views-in-window/ViewInWindow.service';
 
+import { restQueryToORM } from '@/lib/utils';
+
 import AccessMiddleware from '@/middlewares/AccessMiddleware';
 import AuthMiddleware from '@/middlewares/AuthMiddleware';
 
 import ICrudController from '@/interfaces/ICrudController';
 
+import { RestFindQuery } from '@/types';
+
+import Apartment from './Apartment.model';
 import ApartmentService from './Apartment.service';
 
 @Controller(URLS.APARTMENTS, [AuthMiddleware])
@@ -60,10 +65,10 @@ export default class ApartmentController implements ICrudController {
   ])
   async find(
     @Response() res: express.Response,
-    @Query() query?: Record<string, unknown>
+    @Query() query?: RestFindQuery<Apartment>
   ): Promise<void> {
     await this.service
-      .find(query, { city: true, viewsInWindow: true })
+      .find(restQueryToORM(query), { city: true, viewsInWindow: true })
       .then((data) => res.json(data));
   }
 

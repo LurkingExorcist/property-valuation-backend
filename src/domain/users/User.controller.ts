@@ -20,6 +20,8 @@ import AccessRightService from '@/domain/access-rights/AccessRight.service';
 import AccessType from '@/domain/access-rights/types/AccessType';
 import AppSection from '@/domain/access-rights/types/AppSection';
 
+import { restQueryToORM } from '@/lib/utils';
+
 import AccessMiddleware from '@/middlewares/AccessMiddleware';
 import AuthMiddleware from '@/middlewares/AuthMiddleware';
 
@@ -60,12 +62,14 @@ export default class UserController implements ICrudController {
     @Response() res: express.Response,
     @Query() query?: Record<string, unknown>
   ): Promise<void> {
-    await this.service.find(query, { accessRights: true }).then((data) =>
-      res.json({
-        ...data,
-        content: data.content.map((user) => _.omit(user, 'passwordHash')),
-      })
-    );
+    await this.service
+      .find(restQueryToORM(query), { accessRights: true })
+      .then((data) =>
+        res.json({
+          ...data,
+          content: data.content.map((user) => _.omit(user, 'passwordHash')),
+        })
+      );
   }
 
   @Post('/', [

@@ -3,7 +3,6 @@ import _ = require('lodash');
 import { FindOptionsRelations } from 'typeorm';
 
 import ServerError from '@/lib/server-error/ServerError';
-import { sortModelToOrder } from '@/lib/utils';
 
 import ICrudService from '@/interfaces/ICrudService';
 
@@ -38,10 +37,7 @@ export default class AccessRightService implements ICrudService<AccessRight> {
       AccessRight,
       {
         relations,
-        where: query.where,
-        take: query.pageSize,
-        skip: (query.pageIndex || 0) * (query.pageSize || 0),
-        order: sortModelToOrder(query.sort),
+        ...query,
       }
     );
 
