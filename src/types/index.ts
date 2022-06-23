@@ -30,7 +30,10 @@ export enum FilterOperation {
   IS_ANY_OF = 'isAnyOf',
 }
 
-export type Where<T> = Record<keyof T, [FilterOperation, string | string[]]>;
+export type Where<T> = Record<
+  keyof T,
+  [FilterOperation, undefined | string | string[]]
+>;
 
 export type RestFindQuery<T> = {
   where?: Where<T>;
