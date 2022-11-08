@@ -1,0 +1,7 @@
+install.packages('dplyr')
+install.packages('plyr')
+install.packages('stringr')
+install.packages('hash')
+install.packages('corrplot')
+install.packages('broom')
+install.packages('xlsx')

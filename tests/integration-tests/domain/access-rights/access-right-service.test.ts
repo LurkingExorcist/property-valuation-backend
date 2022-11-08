@@ -1,15 +1,10 @@
 import { v4 } from 'uuid';
 
-import AppDataSource from '@/data-source';
+import { DOMAIN_ENTITY_TYPES } from '@/constants';
 
-import AccessRight from '@/domain/access-rights/AccessRight.model';
-import AccessRightService from '@/domain/access-rights/AccessRight.service';
-import AccessType from '@/domain/access-rights/types/AccessType';
-import AppSection from '@/domain/access-rights/types/AppSection';
-
-import ServerError from '@/lib/server-error/ServerError';
-
-import { EntityType } from '@/types';
+import { AppDataSource } from '@/data-source';
+import { AccessRight, AccessRightService, ACCESS_LEVELS } from '@/domain';
+import { ServerError } from '@/lib';
 
 describe('AccessRight.service', () => {
   const service = new AccessRightService();
@@ -20,8 +15,8 @@ describe('AccessRight.service', () => {
   it('::create', async () => {
     await service
       .create({
-        appSection: AppSection.APARTMENTS,
-        accessType: AccessType.READ,
+        domainEntity: DOMAIN_ENTITY_TYPES.APARTMENT,
+        accessLevel: ACCESS_LEVELS.READ,
       })
       .then((instance) => {
         testEntity = instance;
@@ -46,7 +41,7 @@ describe('AccessRight.service', () => {
       })
       .catch((e) =>
         expect(e).toEqual(
-          ServerError.cantFind({ entity: EntityType.ACCESS_RIGHT })
+          ServerError.cantFind({ entity: DOMAIN_ENTITY_TYPES.ACCESS_RIGHT })
         )
       );
   });
@@ -56,7 +51,7 @@ describe('AccessRight.service', () => {
       expect(instances).toBeInstanceOf(Array);
 
       expect(
-        instances.find((instance) => instance.id === testEntity.id)
+        instances.content.find((instance) => instance.id === testEntity.id)
       ).toMatchObject(testEntity);
     });
   });
@@ -64,14 +59,16 @@ describe('AccessRight.service', () => {
   it('::find with query', async () => {
     await service
       .find({
-        appSection: AppSection.APARTMENTS,
-        accessType: AccessType.READ,
+        where: {
+          domainEntity: DOMAIN_ENTITY_TYPES.APARTMENT,
+          accessLevel: ACCESS_LEVELS.READ,
+        },
       })
       .then((instances) => {
         expect(instances).toBeInstanceOf(Array);
 
         expect(
-          instances.find((instance) => instance.id === testEntity.id)
+          instances.content.find((instance) => instance.id === testEntity.id)
         ).toMatchObject(testEntity);
       });
   });
@@ -81,13 +78,13 @@ describe('AccessRight.service', () => {
       .update(
         { id: testEntity.id },
         {
-          appSection: AppSection.CITIES,
-          accessType: AccessType.WRITE,
+          domainEntity: DOMAIN_ENTITY_TYPES.CITY,
+          accessLevel: ACCESS_LEVELS.WRITE,
         }
       )
       .then((instance) => {
-        expect(instance.appSection).toBe(AppSection.CITIES);
-        expect(instance.accessType).toBe(AccessType.WRITE);
+        expect(instance.domainEntity).toBe(DOMAIN_ENTITY_TYPES.CITY);
+        expect(instance.accessLevel).toBe(2);
       });
   });
 
@@ -99,7 +96,7 @@ describe('AccessRight.service', () => {
         })
         .catch((e) =>
           expect(e).toEqual(
-            ServerError.cantFind({ entity: EntityType.ACCESS_RIGHT })
+            ServerError.cantFind({ entity: DOMAIN_ENTITY_TYPES.ACCESS_RIGHT })
           )
         );
     });

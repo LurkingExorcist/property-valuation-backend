@@ -1,6 +1,6 @@
-import faker from '@faker-js/faker';
+import { faker } from '@faker-js/faker';
 
-import City from '@/domain/cities/City.model';
+import { City } from '@/domain';
 
 describe('City.model', () => {
   it('::new', () => {

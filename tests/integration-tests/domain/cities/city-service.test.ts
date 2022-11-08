@@ -1,14 +1,12 @@
-import faker from '@faker-js/faker';
+import { faker } from '@faker-js/faker';
 import { v4 } from 'uuid';
 
-import AppDataSource from '@/data-source';
+import { DOMAIN_ENTITY_TYPES } from '@/constants';
 
-import City from '@/domain/cities/City.model';
-import CityService from '@/domain/cities/City.service';
-
-import ServerError from '@/lib/server-error/ServerError';
-
-import { EntityType, ParameterOf } from '@/types';
+import { AppDataSource } from '@/data-source';
+import { City, CityService } from '@/domain';
+import { ServerError } from '@/lib';
+import { ParameterOf } from '@/types';
 
 describe('City.service', () => {
   const service = new CityService();
@@ -48,7 +46,9 @@ describe('City.service', () => {
         id: v4(),
       })
       .catch((e) =>
-        expect(e).toEqual(ServerError.cantFind({ entity: EntityType.CITY }))
+        expect(e).toEqual(
+          ServerError.cantFind({ entity: DOMAIN_ENTITY_TYPES.CITY })
+        )
       );
   });
 
@@ -57,7 +57,7 @@ describe('City.service', () => {
       expect(instances).toBeInstanceOf(Array);
 
       expect(
-        instances.find((instance) => instance.id === testEntity.id)
+        instances.content.find((instance) => instance.id === testEntity.id)
       ).toMatchObject(testEntity);
     });
   });
@@ -65,14 +65,16 @@ describe('City.service', () => {
   it('::find with query', async () => {
     await service
       .find({
-        name: testQuery.name,
-        region: testQuery.region,
+        where: {
+          name: testQuery.name,
+          region: testQuery.region,
+        },
       })
       .then((instances) => {
         expect(instances).toBeInstanceOf(Array);
 
         expect(
-          instances.find((instance) => instance.id === testEntity.id)
+          instances.content.find((instance) => instance.id === testEntity.id)
         ).toMatchObject(testEntity);
       });
   });
@@ -96,7 +98,9 @@ describe('City.service', () => {
           id: testEntity.id,
         })
         .catch((e) =>
-          expect(e).toEqual(ServerError.cantFind({ entity: EntityType.CITY }))
+          expect(e).toEqual(
+            ServerError.cantFind({ entity: DOMAIN_ENTITY_TYPES.CITY })
+          )
         );
     });
   });

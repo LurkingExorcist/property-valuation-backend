@@ -1,11 +1,10 @@
 import { Injectable } from '@decorators/di';
-import faker from '@faker-js/faker';
+import { faker } from '@faker-js/faker';
 
-import City from '@/domain/cities/City.model';
-import CityService from '@/domain/cities/City.service';
+import { City, CityService } from '@/domain';
 
 @Injectable()
-export default class CityMock {
+export class CityMock {
   private city: City;
   private cityService: CityService = new CityService();
 

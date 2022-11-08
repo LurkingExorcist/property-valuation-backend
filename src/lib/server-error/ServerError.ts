@@ -1,10 +1,10 @@
 import { StatusCodes } from 'http-status-codes';
 
-import { ENTITY_NAMES_DICT, IS_DEBUG_MODE } from '@/config';
+import { ENTITY_NAMES_DICT, IS_DEBUG_MODE } from '@/constants';
 
-import { EntityType } from '@/types';
+import { DomainEntityType } from '@/domain/access-right';
 
-export default class ServerError {
+export class ServerError {
   status: StatusCodes;
   title: string;
   message: string;
@@ -83,7 +83,7 @@ export default class ServerError {
     });
   }
 
-  static cantCreate(options: { entity: EntityType; exception?: Error }) {
+  static cantCreate(options: { entity: DomainEntityType; exception?: Error }) {
     return ServerError.badRequest({
       message: `Не удалось создать запись сущности "${
         ENTITY_NAMES_DICT[options.entity]
@@ -92,7 +92,7 @@ export default class ServerError {
     });
   }
 
-  static cantFind(options: { entity: EntityType; exception?: Error }) {
+  static cantFind(options: { entity: DomainEntityType; exception?: Error }) {
     return ServerError.badRequest({
       message: `Не удалось найти запись сущности "${
         ENTITY_NAMES_DICT[options.entity]
@@ -101,7 +101,7 @@ export default class ServerError {
     });
   }
 
-  static cantUpdate(options: { entity: EntityType; exception?: Error }) {
+  static cantUpdate(options: { entity: DomainEntityType; exception?: Error }) {
     return ServerError.badRequest({
       message: `Не удалось обновить запись сущности "${
         ENTITY_NAMES_DICT[options.entity]
@@ -110,7 +110,7 @@ export default class ServerError {
     });
   }
 
-  static cantRemove(options: { entity: EntityType; exception?: Error }) {
+  static cantRemove(options: { entity: DomainEntityType; exception?: Error }) {
     return ServerError.badRequest({
       message: `Не удалось удалить запись сущности "${
         ENTITY_NAMES_DICT[options.entity]

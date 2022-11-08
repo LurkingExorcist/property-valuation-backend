@@ -4,15 +4,14 @@ import { Middleware } from '@decorators/express';
 import * as express from 'express';
 import _ = require('lodash');
 
-import AccessType from '@/domain/access-rights/types/AccessType';
-import AppSection from '@/domain/access-rights/types/AppSection';
-import UserService from '@/domain/users/User.service';
+import UserService from '@/domain/user/User.service';
 
-import ServerError from '@/lib/server-error/ServerError';
+import { AccessLevel, DomainEntityType } from '@/domain';
+import { ServerError } from '@/lib';
 
-export default function AccessMiddleware(options: {
-  appSection: AppSection;
-  accessType: AccessType;
+export function AccessMiddleware(options: {
+  domainEntity: DomainEntityType;
+  accessLevel: AccessLevel;
 }): Type {
   @Injectable()
   class AccessMiddlewareClass implements Middleware {
@@ -35,8 +34,8 @@ export default function AccessMiddleware(options: {
 
         const accessRight = user.accessRights.find(
           (ar) =>
-            ar.appSection === options.appSection &&
-            ar.accessType === options.accessType
+            ar.domainEntity === options.domainEntity &&
+            ar.accessLevel >= options.accessLevel
         );
 
         if (_.isNil(accessRight)) {

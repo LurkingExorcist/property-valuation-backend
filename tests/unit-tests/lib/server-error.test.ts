@@ -1,8 +1,8 @@
-import faker from '@faker-js/faker';
+import { faker } from '@faker-js/faker';
 
-import ServerError from '@/lib/server-error/ServerError';
+import { DOMAIN_ENTITY_TYPES } from '@/constants';
 
-import { EntityType } from '@/types';
+import { ServerError } from '@/lib';
 
 describe('ServerError', () => {
   it('::notFound', () => {
@@ -41,25 +41,25 @@ describe('ServerError', () => {
 
   it('::cantCreate', () => {
     expect(
-      ServerError.cantCreate({ entity: EntityType.ACCESS_RIGHT })
+      ServerError.cantCreate({ entity: DOMAIN_ENTITY_TYPES.ACCESS_RIGHT })
     ).toBeInstanceOf(ServerError);
   });
 
   it('::cantFind', () => {
     expect(
-      ServerError.cantFind({ entity: EntityType.APARTMENT })
+      ServerError.cantFind({ entity: DOMAIN_ENTITY_TYPES.APARTMENT })
     ).toBeInstanceOf(ServerError);
   });
 
   it('::cantUpdate', () => {
-    expect(ServerError.cantUpdate({ entity: EntityType.CITY })).toBeInstanceOf(
-      ServerError
-    );
+    expect(
+      ServerError.cantUpdate({ entity: DOMAIN_ENTITY_TYPES.CITY })
+    ).toBeInstanceOf(ServerError);
   });
 
   it('::cantRemove', () => {
-    expect(ServerError.cantRemove({ entity: EntityType.USER })).toBeInstanceOf(
-      ServerError
-    );
+    expect(
+      ServerError.cantRemove({ entity: DOMAIN_ENTITY_TYPES.USER })
+    ).toBeInstanceOf(ServerError);
   });
 });

@@ -1,22 +1,18 @@
 import _ = require('lodash');
-import UserTokenMock from 'tests/mocks/UserTokenMock';
+import { UserTokenMock } from 'tests/mocks';
 import { v4 } from 'uuid';
 
-import AppDataSource from '@/data-source';
+import { DOMAIN_ENTITY_TYPES } from '@/constants';
 
-import AccessType from '@/domain/access-rights/types/AccessType';
-import AppSection from '@/domain/access-rights/types/AppSection';
-import AuthenticationService from '@/domain/authentication/Authentication.service';
-import UserService from '@/domain/users/User.service';
-
-import ServerError from '@/lib/server-error/ServerError';
-
+import { AppDataSource } from '@/data-source';
+import { AuthenticationService, UserService } from '@/domain';
+import { ServerError } from '@/lib';
 import { ParameterOf } from '@/types';
 
 describe('Authentication.service', () => {
   const userMock = new UserTokenMock({
-    section: AppSection.CITIES,
-    rights: [AccessType.READ, AccessType.WRITE],
+    domainEntity: DOMAIN_ENTITY_TYPES.USER,
+    accessLevel: 2,
   });
 
   const service = new AuthenticationService(new UserService());

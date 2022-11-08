@@ -4,12 +4,12 @@ import * as express from 'express';
 import * as jwt from 'jsonwebtoken';
 import _ = require('lodash');
 
-import User from '@/domain/users/User.model';
+import { User } from '@/domain/';
 
-import ServerError from '@/lib/server-error/ServerError';
+import { ServerError } from '@/lib';
 
 @Injectable()
-export default class AuthMiddleware implements Middleware {
+export class AuthMiddleware implements Middleware {
   use(
     request: express.Request,
     response: express.Response,

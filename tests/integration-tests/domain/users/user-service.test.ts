@@ -1,15 +1,13 @@
-import faker from '@faker-js/faker';
-import AccessRightsMock from 'tests/mocks/AccessRightsMock';
+import { faker } from '@faker-js/faker';
+import { AccessRightsMock } from 'tests/mocks';
 import { v4 } from 'uuid';
 
-import AppDataSource from '@/data-source';
+import { DOMAIN_ENTITY_TYPES } from '@/constants';
 
-import User from '@/domain/users/User.model';
-import UserService from '@/domain/users/User.service';
-
-import ServerError from '@/lib/server-error/ServerError';
-
-import { EntityType, ParameterOf } from '@/types';
+import { AppDataSource } from '@/data-source';
+import { User, UserService } from '@/domain';
+import { ServerError } from '@/lib';
+import { ParameterOf } from '@/types';
 
 describe('User.service', () => {
   const service = new UserService();
@@ -60,7 +58,9 @@ describe('User.service', () => {
         id: v4(),
       })
       .catch((e) =>
-        expect(e).toEqual(ServerError.cantFind({ entity: EntityType.USER }))
+        expect(e).toEqual(
+          ServerError.cantFind({ entity: DOMAIN_ENTITY_TYPES.USER })
+        )
       );
   });
 
@@ -69,7 +69,7 @@ describe('User.service', () => {
       expect(instances).toBeInstanceOf(Array);
 
       expect(
-        instances.find((instance) => instance.id === testEntity.id)
+        instances.content.find((instance) => instance.id === testEntity.id)
       ).toMatchObject(testEntity);
     });
   });
@@ -77,14 +77,16 @@ describe('User.service', () => {
   it('::find with query', async () => {
     await service
       .find({
-        username: testQuery.username,
-        email: testQuery.email,
+        where: {
+          username: testQuery.username,
+          email: testQuery.email,
+        },
       })
       .then((instances) => {
         expect(instances).toBeInstanceOf(Array);
 
         expect(
-          instances.find((instance) => instance.id === testEntity.id)
+          instances.content.find((instance) => instance.id === testEntity.id)
         ).toMatchObject(testEntity);
       });
   });
@@ -110,7 +112,9 @@ describe('User.service', () => {
           id: testEntity.id,
         })
         .catch((e) =>
-          expect(e).toEqual(ServerError.cantFind({ entity: EntityType.USER }))
+          expect(e).toEqual(
+            ServerError.cantFind({ entity: DOMAIN_ENTITY_TYPES.USER })
+          )
         );
     });
   });

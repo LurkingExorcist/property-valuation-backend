@@ -2,13 +2,9 @@ import 'reflect-metadata';
 
 import { DataSource } from 'typeorm';
 
-import AccessRight from '@/domain/access-rights/AccessRight.model';
-import Apartment from '@/domain/apartments/Apartment.model';
-import City from '@/domain/cities/City.model';
-import User from '@/domain/users/User.model';
-import ViewInWindow from '@/domain/views-in-window/ViewInWindow.model';
+import { AccessRight, Apartment, City, User, ViewInWindow } from './domain';
 
-const AppDataSource = new DataSource({
+export const AppDataSource = new DataSource({
   type: 'postgres',
   host: 'localhost',
   port: 5432,
@@ -21,5 +17,3 @@ const AppDataSource = new DataSource({
   subscribers: [],
   // logging: ['query', 'error'],
 });
-
-export default AppDataSource;

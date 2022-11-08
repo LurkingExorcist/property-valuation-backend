@@ -1,3 +1,3 @@
-export default interface IModel {
+export interface IModel {
   id: string;
 }

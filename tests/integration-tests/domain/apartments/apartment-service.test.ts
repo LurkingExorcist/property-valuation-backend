@@ -1,16 +1,13 @@
 import _ = require('lodash');
-import CityMock from 'tests/mocks/CityMock';
-import ViewInWindowMock from 'tests/mocks/ViewInWindowMock';
+import { CityMock, ViewInWindowMock } from 'tests/mocks';
 import { v4 } from 'uuid';
 
-import AppDataSource from '@/data-source';
+import { DOMAIN_ENTITY_TYPES } from '@/constants';
 
-import Apartment from '@/domain/apartments/Apartment.model';
-import ApartmentService from '@/domain/apartments/Apartment.service';
-
-import ServerError from '@/lib/server-error/ServerError';
-
-import { EntityType, ParameterOf } from '@/types';
+import { AppDataSource } from '@/data-source';
+import { Apartment, ApartmentService } from '@/domain';
+import { ServerError } from '@/lib';
+import { ParameterOf } from '@/types';
 
 describe('Apartment.service', () => {
   const service = new ApartmentService();
@@ -70,7 +67,7 @@ describe('Apartment.service', () => {
       })
       .catch((e) =>
         expect(e).toEqual(
-          ServerError.cantFind({ entity: EntityType.APARTMENT })
+          ServerError.cantFind({ entity: DOMAIN_ENTITY_TYPES.APARTMENT })
         )
       );
   });
@@ -80,7 +77,7 @@ describe('Apartment.service', () => {
       expect(instances).toBeInstanceOf(Array);
 
       expect(
-        instances.find((instance) => instance.id === testEntity.id)
+        instances.content.find((instance) => instance.id === testEntity.id)
       ).toMatchObject(testEntity);
     });
   });
@@ -88,18 +85,20 @@ describe('Apartment.service', () => {
   it('::find with query', async () => {
     await service
       .find({
-        city: {
-          name: testQuery.city.name,
+        where: {
+          city: {
+            name: testQuery.city.name,
+          },
+          floor: testQuery.floor,
+          roomCount: testQuery.roomCount,
+          isStudio: testQuery.isStudio,
         },
-        floor: testQuery.floor,
-        roomCount: testQuery.roomCount,
-        isStudio: testQuery.isStudio,
       })
       .then((instances) => {
         expect(instances).toBeInstanceOf(Array);
 
         expect(
-          instances.find((instance) => instance.id === testEntity.id)
+          instances.content.find((instance) => instance.id === testEntity.id)
         ).toMatchObject(testEntity);
       });
   });
@@ -136,7 +135,7 @@ describe('Apartment.service', () => {
         })
         .catch((e) =>
           expect(e).toEqual(
-            ServerError.cantFind({ entity: EntityType.APARTMENT })
+            ServerError.cantFind({ entity: DOMAIN_ENTITY_TYPES.APARTMENT })
           )
         );
     });

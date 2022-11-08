@@ -1,32 +1,27 @@
 import 'jest';
-import faker from '@faker-js/faker';
+import { faker } from '@faker-js/faker';
 import * as express from 'express';
 import { StatusCodes } from 'http-status-codes';
 import _ = require('lodash');
 import * as request from 'supertest';
-import AccessRightsMock from 'tests/mocks/AccessRightsMock';
-import UserTokenMock from 'tests/mocks/UserTokenMock';
+import { AccessRightsMock, UserTokenMock } from 'tests/mocks';
 
-import { URLS } from '@/config';
+import { DOMAIN_ENTITY_TYPES, URLS } from '@/constants';
 
-import AppDataSource from '@/data-source';
-
-import AccessType from '@/domain/access-rights/types/AccessType';
-import AppSection from '@/domain/access-rights/types/AppSection';
-import User from '@/domain/users/User.model';
-
-import { App } from '@/lib/app';
+import { AppDataSource } from '@/data-source';
+import { User } from '@/domain';
+import { App } from '@/lib';
 
 console.error = jest.fn();
 
 describe(URLS.USERS, () => {
   const userRightlessMock = new UserTokenMock({
-    section: AppSection.CITIES,
-    rights: [],
+    domainEntity: DOMAIN_ENTITY_TYPES.USER,
+    accessLevel: 0,
   });
   const userMock = new UserTokenMock({
-    section: AppSection.USERS,
-    rights: [AccessType.READ, AccessType.WRITE],
+    domainEntity: DOMAIN_ENTITY_TYPES.USER,
+    accessLevel: 2,
   });
   const accessRightsMock = new AccessRightsMock();
 
@@ -48,7 +43,7 @@ describe(URLS.USERS, () => {
     testQuery = {
       username: faker.internet.userName(),
       email: faker.internet.email(),
-      phoneNumber: faker.phone.phoneNumber('+7 (900) ###-##-##'),
+      phoneNumber: faker.phone.number('+7 (900) ###-##-##'),
       password: faker.internet.password(),
       accessRightsIds: accessRightsMock
         .getAccessRights()

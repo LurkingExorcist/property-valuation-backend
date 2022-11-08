@@ -1,26 +1,11 @@
 import * as express from 'express';
 import { StatusCodes } from 'http-status-codes';
 import _ = require('lodash');
+import { MockRequest, MockResponse } from 'tests/mocks';
 import { QueryFailedError } from 'typeorm';
 
-import ServerError from '@/lib/server-error/ServerError';
-
-import ServerErrorMiddleware from '@/middlewares/ServerErrorMiddleware';
-
-class MockRequest {}
-class MockResponse {
-  statusCode: number;
-  body: object;
-
-  status(statusCode: number) {
-    this.statusCode = statusCode;
-    return this;
-  }
-  json(body: object) {
-    this.body = body;
-    return this;
-  }
-}
+import { ServerError } from '@/lib';
+import { ServerErrorMiddleware } from '@/middlewares';
 
 const nextMock = jest.fn();
 console.error = jest.fn();

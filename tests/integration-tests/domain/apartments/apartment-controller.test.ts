@@ -3,30 +3,25 @@ import * as express from 'express';
 import { StatusCodes } from 'http-status-codes';
 import _ = require('lodash');
 import * as request from 'supertest';
-import CityMock from 'tests/mocks/CityMock';
-import UserTokenMock from 'tests/mocks/UserTokenMock';
-import ViewInWindowMock from 'tests/mocks/ViewInWindowMock';
+import { CityMock, UserTokenMock, ViewInWindowMock } from 'tests/mocks';
 
-import { URLS } from '@/config';
-
-import AppDataSource from '@/data-source';
-
-import AccessType from '@/domain/access-rights/types/AccessType';
-import AppSection from '@/domain/access-rights/types/AppSection';
-import Apartment from '@/domain/apartments/Apartment.model';
+import { DOMAIN_ENTITY_TYPES, URLS } from '@/constants';
 
 import { App } from '@/lib/app';
+
+import { AppDataSource } from '@/data-source';
+import { ACCESS_LEVELS, Apartment } from '@/domain';
 
 console.error = jest.fn();
 
 describe(URLS.APARTMENTS, () => {
   const userRightlessMock = new UserTokenMock({
-    section: AppSection.APARTMENTS,
-    rights: [],
+    domainEntity: DOMAIN_ENTITY_TYPES.APARTMENT,
+    accessLevel: 0,
   });
   const userMock = new UserTokenMock({
-    section: AppSection.APARTMENTS,
-    rights: [AccessType.READ, AccessType.WRITE],
+    domainEntity: DOMAIN_ENTITY_TYPES.APARTMENT,
+    accessLevel: 2,
   });
   const cityMock = new CityMock();
   const viewInWindowMock = new ViewInWindowMock();

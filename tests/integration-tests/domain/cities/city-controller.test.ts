@@ -1,30 +1,27 @@
 import 'jest';
-import faker from '@faker-js/faker';
+import { faker } from '@faker-js/faker';
 import * as express from 'express';
 import { StatusCodes } from 'http-status-codes';
 import * as request from 'supertest';
-import UserTokenMock from 'tests/mocks/UserTokenMock';
+import { UserTokenMock } from 'tests/mocks';
 
-import { URLS } from '@/config';
-
-import AppDataSource from '@/data-source';
-
-import AccessType from '@/domain/access-rights/types/AccessType';
-import AppSection from '@/domain/access-rights/types/AppSection';
-import City from '@/domain/cities/City.model';
+import { DOMAIN_ENTITY_TYPES, URLS } from '@/constants';
 
 import { App } from '@/lib/app';
+
+import { AppDataSource } from '@/data-source';
+import { City } from '@/domain';
 
 console.error = jest.fn();
 
 describe(URLS.CITIES, () => {
   const userRightlessMock = new UserTokenMock({
-    section: AppSection.CITIES,
-    rights: [],
+    domainEntity: DOMAIN_ENTITY_TYPES.CITY,
+    accessLevel: 0,
   });
   const userMock = new UserTokenMock({
-    section: AppSection.CITIES,
-    rights: [AccessType.READ, AccessType.WRITE],
+    domainEntity: DOMAIN_ENTITY_TYPES.CITY,
+    accessLevel: 2,
   });
 
   let testQuery: Record<string, any>;

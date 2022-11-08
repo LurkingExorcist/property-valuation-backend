@@ -2,9 +2,9 @@ import { FindOptionsRelations } from 'typeorm';
 
 import { FindQuery, PaginatedData } from '@/types';
 
-import IModel from './IModel';
+import { IModel } from './IModel';
 
-export default interface ICrudService<T extends IModel> {
+export interface ICrudService<T extends IModel> {
   findById(
     query: { id: string },
     relations?: FindOptionsRelations<T>

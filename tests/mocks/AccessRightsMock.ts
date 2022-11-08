@@ -1,14 +1,13 @@
 import { Injectable } from '@decorators/di';
-import faker from '@faker-js/faker';
+import { faker } from '@faker-js/faker';
 import _ = require('lodash');
 
-import AccessRight from '@/domain/access-rights/AccessRight.model';
-import AccessRightService from '@/domain/access-rights/AccessRight.service';
-import AccessType from '@/domain/access-rights/types/AccessType';
-import AppSection from '@/domain/access-rights/types/AppSection';
+import { DOMAIN_ENTITY_TYPES } from '@/constants';
+
+import { AccessRight, AccessRightService, ACCESS_LEVELS } from '@/domain';
 
 @Injectable()
-export default class AccessRightsMock {
+export class AccessRightsMock {
   private accessRights: AccessRight[];
   private accessRightService: AccessRightService = new AccessRightService();
 
@@ -24,8 +23,8 @@ export default class AccessRightsMock {
     return Promise.all(
       _.range(5).map(() =>
         this.accessRightService.create({
-          appSection: faker.random.objectElement(AppSection),
-          accessType: faker.random.objectElement(AccessType),
+          domainEntity: faker.helpers.objectValue(DOMAIN_ENTITY_TYPES),
+          accessLevel: faker.helpers.objectValue(ACCESS_LEVELS),
         })
       )
     );

@@ -1,6 +1,6 @@
-import faker from '@faker-js/faker';
+import { faker } from '@faker-js/faker';
 
-import ViewInWindow from '@/domain/views-in-window/ViewInWindow.model';
+import { ViewInWindow } from '@/domain';
 
 describe('ViewInWindow.model', () => {
   it('::new', () => {

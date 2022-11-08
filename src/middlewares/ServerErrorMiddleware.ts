@@ -4,12 +4,12 @@ import * as express from 'express';
 import _ = require('lodash');
 import { QueryFailedError } from 'typeorm';
 
-import { IS_DEBUG_MODE } from '@/config';
+import { IS_DEBUG_MODE } from '@/constants';
 
 import ServerError from '@/lib/server-error/ServerError';
 
 @Injectable()
-export default class ServerErrorMiddleware implements ErrorMiddleware {
+export class ServerErrorMiddleware implements ErrorMiddleware {
   public use(
     error: unknown,
     request: express.Request,

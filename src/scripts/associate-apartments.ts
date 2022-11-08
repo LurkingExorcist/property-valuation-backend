@@ -1,14 +1,11 @@
 import 'dotenv/config';
 import 'module-alias/register';
+
 import _ = require('lodash');
 
-import AppDataSource from '@/data-source';
-
-import Apartment from '@/domain/apartments/Apartment.model';
-import ViewInWindow from '@/domain/views-in-window/ViewInWindow.model';
-
-import CsvReader from '@/lib/csv-reader/CsvReader';
-
+import { AppDataSource } from '@/data-source';
+import { Apartment, ViewInWindow } from '@/domain';
+import { CsvReader } from '@/lib';
 import { ElementType } from '@/types';
 
 const FILE_PATH = './data-science/out/tables/filtered_apartments.csv';

@@ -1,15 +1,15 @@
-import AccessRight from '@/domain/access-rights/AccessRight.model';
-import AccessType from '@/domain/access-rights/types/AccessType';
-import AppSection from '@/domain/access-rights/types/AppSection';
+import { DOMAIN_ENTITY_TYPES } from '@/constants';
+
+import { AccessRight } from '@/domain';
 
 describe('AccessRight.model', () => {
   it('::new', () => {
-    const appSection = AppSection.APARTMENTS;
-    const accessType = AccessType.READ;
+    const domainEntity = DOMAIN_ENTITY_TYPES.APARTMENT;
+    const accessLevel = 2;
 
     const accessRight = AccessRight.new({
-      appSection,
-      accessType,
+      domainEntity,
+      accessLevel,
     });
 
     expect(accessRight).toBeInstanceOf(AccessRight);

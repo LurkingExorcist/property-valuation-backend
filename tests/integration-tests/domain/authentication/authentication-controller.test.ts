@@ -3,25 +3,20 @@ import * as express from 'express';
 import { StatusCodes } from 'http-status-codes';
 import _ = require('lodash');
 import * as request from 'supertest';
-import UserTokenMock from 'tests/mocks/UserTokenMock';
+import { UserTokenMock } from 'tests/mocks';
 import { v4 } from 'uuid';
 
-import { URLS } from '@/config';
+import { DOMAIN_ENTITY_TYPES, URLS } from '@/constants';
 
-import AppDataSource from '@/data-source';
-
-import AccessType from '@/domain/access-rights/types/AccessType';
-import AppSection from '@/domain/access-rights/types/AppSection';
-
-import { App } from '@/lib/app';
-import ServerError from '@/lib/server-error/ServerError';
+import { AppDataSource } from '@/data-source';
+import { App, ServerError } from '@/lib';
 
 console.error = jest.fn();
 
 describe(URLS.AUTHENTICATION, () => {
   const userMock = new UserTokenMock({
-    section: AppSection.CITIES,
-    rights: [AccessType.READ, AccessType.WRITE],
+    domainEntity: DOMAIN_ENTITY_TYPES.USER,
+    accessLevel: 2,
   });
 
   let testQuery: Record<string, any>;

@@ -6,7 +6,7 @@ import { StatusCodes } from 'http-status-codes';
 import ServerError from '@/lib/server-error/ServerError';
 
 @Injectable()
-export default class NotFoundMiddleware implements Middleware {
+export class NotFoundMiddleware implements Middleware {
   use(request: express.Request, response: express.Response): void {
     response.status(StatusCodes.NOT_FOUND).json(
       ServerError.notFound({

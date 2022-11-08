@@ -2,11 +2,10 @@ import 'dotenv/config';
 import 'module-alias/register';
 import _ = require('lodash');
 
-import AppDataSource from '@/data-source';
+import { DOMAIN_ENTITY_TYPES } from '@/constants';
 
-import AccessRight from '@/domain/access-rights/AccessRight.model';
-import AccessType from '@/domain/access-rights/types/AccessType';
-import AppSection from '@/domain/access-rights/types/AppSection';
+import { AppDataSource } from '@/data-source';
+import { AccessRight, ACCESS_LEVELS, DomainEntityType } from '@/domain';
 
 const generateAccessRights = async () => {
   console.info('GENERATE ACCESS RIGHTS');
@@ -14,15 +13,14 @@ const generateAccessRights = async () => {
   console.log();
 
   try {
-    const entities = _.keys(AppSection).map((appSection) => {
-      return _.values(AccessType).map((accessType) => {
-        const accessRight = AccessRight.new({
-          appSection: appSection as AppSection,
-          accessType,
-        });
-        return accessRight;
-      });
-    });
+    const entities = _.values(DOMAIN_ENTITY_TYPES).map((domainEntity) =>
+      _.values(ACCESS_LEVELS).map((accessLevel) =>
+        AccessRight.new({
+          domainEntity,
+          accessLevel,
+        })
+      )
+    );
 
     const queryRunner = AppDataSource.createQueryRunner();
     await queryRunner.startTransaction();
@@ -36,8 +34,8 @@ const generateAccessRights = async () => {
                 AccessRight,
                 {
                   where: {
-                    appSection: entity.appSection,
-                    accessType: entity.accessType,
+                    domainEntity: entity.domainEntity,
+                    accessLevel: entity.accessLevel,
                   },
                 }
               );

@@ -1,14 +1,12 @@
-import faker from '@faker-js/faker';
+import { faker } from '@faker-js/faker';
 import { v4 } from 'uuid';
 
-import AppDataSource from '@/data-source';
+import { DOMAIN_ENTITY_TYPES } from '@/constants';
 
-import ViewInWindow from '@/domain/views-in-window/ViewInWindow.model';
-import ViewInWindowService from '@/domain/views-in-window/ViewInWindow.service';
-
-import ServerError from '@/lib/server-error/ServerError';
-
-import { EntityType, ParameterOf } from '@/types';
+import { AppDataSource } from '@/data-source';
+import { ViewInWindow, ViewInWindowService } from '@/domain';
+import { ServerError } from '@/lib';
+import { ParameterOf } from '@/types';
 
 describe('ViewInWindow.service', () => {
   const service = new ViewInWindowService();
@@ -49,7 +47,7 @@ describe('ViewInWindow.service', () => {
       })
       .catch((e) =>
         expect(e).toEqual(
-          ServerError.cantFind({ entity: EntityType.VIEW_IN_WINDOW })
+          ServerError.cantFind({ entity: DOMAIN_ENTITY_TYPES.VIEW_IN_WINDOW })
         )
       );
   });
@@ -59,7 +57,7 @@ describe('ViewInWindow.service', () => {
       expect(instances).toBeInstanceOf(Array);
 
       expect(
-        instances.find((instance) => instance.id === testEntity.id)
+        instances.content.find((instance) => instance.id === testEntity.id)
       ).toMatchObject(testEntity);
     });
   });
@@ -67,14 +65,16 @@ describe('ViewInWindow.service', () => {
   it('::find with query', async () => {
     await service
       .find({
-        name: testQuery.name,
-        description: testQuery.description,
+        where: {
+          name: testQuery.name,
+          description: testQuery.description,
+        },
       })
       .then((instances) => {
         expect(instances).toBeInstanceOf(Array);
 
         expect(
-          instances.find((instance) => instance.id === testEntity.id)
+          instances.content.find((instance) => instance.id === testEntity.id)
         ).toMatchObject(testEntity);
       });
   });
@@ -99,7 +99,7 @@ describe('ViewInWindow.service', () => {
         })
         .catch((e) =>
           expect(e).toEqual(
-            ServerError.cantFind({ entity: EntityType.VIEW_IN_WINDOW })
+            ServerError.cantFind({ entity: DOMAIN_ENTITY_TYPES.VIEW_IN_WINDOW })
           )
         );
     });

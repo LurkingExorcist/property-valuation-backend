@@ -1,9 +1,7 @@
 import _ = require('lodash');
 import { v4 } from 'uuid';
 
-import Apartment from '@/domain/apartments/Apartment.model';
-import City from '@/domain/cities/City.model';
-import ViewInWindow from '@/domain/views-in-window/ViewInWindow.model';
+import { Apartment, City, ViewInWindow } from '@/domain';
 
 describe('Apartment.model', () => {
   it('::new', () => {

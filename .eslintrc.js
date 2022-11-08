@@ -5,7 +5,7 @@ module.exports = {
     node: true,
     jest: true,
   },
-  ignorePatterns: ['.eslintrc.js', 'jest.config.js'],
+  ignorePatterns: ['.eslintrc.js', 'jest.config.js', 'data-science'],
   extends: [
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
@@ -30,7 +30,7 @@ module.exports = {
         'newlines-between': 'always',
         pathGroups: [
           {
-            pattern: '@/config',
+            pattern: '@/constants',
             group: 'internal',
             position: 'after',
           },

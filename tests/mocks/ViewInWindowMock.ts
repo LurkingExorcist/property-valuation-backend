@@ -1,12 +1,11 @@
 import { Injectable } from '@decorators/di';
-import faker from '@faker-js/faker';
+import { faker } from '@faker-js/faker';
 import _ = require('lodash');
 
-import ViewInWindow from '@/domain/views-in-window/ViewInWindow.model';
-import ViewInWindowService from '@/domain/views-in-window/ViewInWindow.service';
+import { ViewInWindow, ViewInWindowService } from '@/domain';
 
 @Injectable()
-export default class ViewInWindowMock {
+export class ViewInWindowMock {
   private views: ViewInWindow[];
   private viewService: ViewInWindowService = new ViewInWindowService();
 

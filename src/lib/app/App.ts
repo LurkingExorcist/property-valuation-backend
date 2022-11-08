@@ -3,13 +3,13 @@ import * as cors from 'cors';
 import * as express from 'express';
 import helmet from 'helmet';
 
-import { PORT } from '@/config';
+import { PORT } from '@/constants';
 
 import ApartmentController from '@/domain/apartments/Apartment.controller';
 import AuthenticationController from '@/domain/authentication/Authentication.controller';
-import CityController from '@/domain/cities/City.controller';
-import UserController from '@/domain/users/User.controller';
-import ViewInWindowController from '@/domain/views-in-window/ViewInWindow.controller';
+import CityController from '@/domain/city/controllers/City.controller';
+import UserController from '@/domain/user/User.controller';
+import ViewInWindowController from '@/domain/view-in-window/ViewInWindow.controller';
 
 import NotFoundMiddleware from '@/middlewares/NotFoundMiddleware';
 import ServerErrorMiddleware from '@/middlewares/ServerErrorMiddleware';

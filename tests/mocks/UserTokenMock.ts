@@ -1,44 +1,39 @@
 import * as jwt from 'jsonwebtoken';
 import _ = require('lodash');
 
-import { TOKEN_EXPIRES_IN } from '@/config';
+import { TOKEN_EXPIRES_IN } from '@/constants';
 
-import AccessRight from '@/domain/access-rights/AccessRight.model';
-import AccessRightService from '@/domain/access-rights/AccessRight.service';
-import AccessType from '@/domain/access-rights/types/AccessType';
-import AppSection from '@/domain/access-rights/types/AppSection';
-import User from '@/domain/users/User.model';
-import UserService from '@/domain/users/User.service';
+import {
+  AccessLevel,
+  AccessRightService,
+  DomainEntityType,
+  User,
+  UserService,
+} from '@/domain';
 
-export default class UserTokenMock {
-  private section: AppSection;
-  private rights: AccessType[];
+export class UserTokenMock {
+  private domainEntity: DomainEntityType;
+  private accessLevel: AccessLevel;
 
-  private accessRights: AccessRight[];
   private user: User;
 
   private accessRightService: AccessRightService = new AccessRightService();
   private userService: UserService = new UserService();
 
-  constructor(options: { section: AppSection; rights: AccessType[] }) {
-    this.section = options.section;
-    this.rights = options.rights;
+  constructor(options: {
+    domainEntity: DomainEntityType;
+    accessLevel: AccessLevel;
+  }) {
+    this.domainEntity = options.domainEntity;
+    this.accessLevel = options.accessLevel;
   }
 
   public async init() {
-    await this.createAccessRights();
     await this.createUser();
   }
 
   public async clear() {
     await this.userService.remove({ id: this.user.id });
-    await Promise.all(
-      this.accessRights.map(({ id }) =>
-        this.accessRightService.remove({
-          id,
-        })
-      )
-    );
   }
 
   public getToken(expiresIn: number = TOKEN_EXPIRES_IN) {
@@ -59,24 +54,18 @@ export default class UserTokenMock {
     return 'password';
   }
 
-  private async createAccessRights() {
-    this.accessRights = await Promise.all(
-      this.rights.map((accessType) =>
-        this.accessRightService.create({
-          appSection: this.section,
-          accessType,
-        })
-      )
-    );
-  }
-
   private async createUser() {
     this.user = await this.userService.create({
       username: 'test',
       email: 'test@test.org',
       phoneNumber: '+79995554433',
       password: this.getPassword(),
-      accessRights: this.accessRights,
+      accessRights: [
+        await this.accessRightService.create({
+          domainEntity: this.domainEntity,
+          accessLevel: this.accessLevel,
+        }),
+      ],
     });
   }
 }

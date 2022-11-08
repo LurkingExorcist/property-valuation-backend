@@ -1,12 +1,10 @@
 import 'dotenv/config';
 import 'module-alias/register';
-import faker from '@faker-js/faker';
+import { faker } from '@faker-js/faker';
 import _ = require('lodash');
 
-import AppDataSource from '@/data-source';
-
-import AccessRight from '@/domain/access-rights/AccessRight.model';
-import User from '@/domain/users/User.model';
+import { AppDataSource } from '@/data-source';
+import { AccessRight, User } from '@/domain';
 
 const generateUsers = async () => {
   console.info('GENERATE USERS');
