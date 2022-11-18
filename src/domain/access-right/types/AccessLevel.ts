@@ -1,5 +1,5 @@
-import { ValueOf } from '@/types';
+import { ObjectValueOf } from '@/types';
 
 import { ACCESS_LEVELS } from '../constants';
 
-export type AccessLevel = ValueOf<typeof ACCESS_LEVELS>;
+export type AccessLevel = ObjectValueOf<typeof ACCESS_LEVELS>;

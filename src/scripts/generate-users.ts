@@ -18,15 +18,32 @@ const generateUsers = async () => {
     await queryRunner.startTransaction();
 
     try {
+      await Promise.resolve(
+        User.new({
+          username: 'admin',
+          email: 'admin@property-evaluation.study',
+          phoneNumber: '+79991556683',
+          password: 'password',
+          accessRights,
+        })
+      ).then(async (admin) => {
+        await queryRunner.manager.save(admin);
+
+        console.info(`admin user record is saved`);
+      });
+
       await Promise.all(
         _.range(1, 10)
           .map(() =>
             User.new({
               username: faker.internet.userName(),
               email: faker.internet.email(),
-              phoneNumber: faker.phone.phoneNumber('+7 (900) ###-##-##'),
+              phoneNumber: faker.phone.number('+7 (900) ###-##-##'),
               password: 'password',
-              accessRights: _.sampleSize(accessRights, _.random(6)),
+              accessRights: _.sampleSize(
+                accessRights,
+                _.random(accessRights.length)
+              ),
             })
           )
           .map(async (user, index, { length }) => {

@@ -21,7 +21,7 @@ import { CityService } from '@/domain/city';
 import { ViewInWindowService } from '@/domain/view-in-window';
 
 import { ICrudController } from '@/interfaces';
-import { restQueryToORM } from '@/lib';
+import { DataConverter } from '@/lib';
 import { AccessMiddleware, AuthMiddleware } from '@/middlewares';
 import { RestFindQuery } from '@/types';
 
@@ -63,7 +63,10 @@ export class ApartmentController implements ICrudController {
     @Query() query?: RestFindQuery<Apartment>
   ): Promise<void> {
     await this.service
-      .find(restQueryToORM(query), { city: true, viewsInWindow: true })
+      .find(DataConverter.restQueryToORM(query), {
+        city: true,
+        viewsInWindow: true,
+      })
       .then((data) => res.json(data));
   }
 

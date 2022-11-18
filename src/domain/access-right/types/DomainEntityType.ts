@@ -1,5 +1,5 @@
 import { DOMAIN_ENTITY_TYPES } from '@/constants';
 
-import { ValueOf } from '@/types';
+import { ObjectValueOf } from '@/types';
 
-export type DomainEntityType = ValueOf<typeof DOMAIN_ENTITY_TYPES>;
+export type DomainEntityType = ObjectValueOf<typeof DOMAIN_ENTITY_TYPES>;

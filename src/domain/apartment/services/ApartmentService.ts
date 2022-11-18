@@ -2,13 +2,11 @@ import { Injectable } from '@decorators/di';
 import _ = require('lodash');
 import { FindOptionsRelations } from 'typeorm';
 
-import { DOMAIN_ENTITY_TYPES } from '@/domain/access-right';
-
-import ServerError from '@/lib/server-error/ServerError';
-
-import ICrudService from '@/interfaces/ICrudService';
+import { DOMAIN_ENTITY_TYPES } from '@/constants';
 
 import { AppDataSource } from '@/data-source';
+import { ICrudService } from '@/interfaces';
+import { ServerError } from '@/lib';
 import { FindQuery, PaginatedData, ParameterOf } from '@/types';
 
 import { Apartment } from '../models/';

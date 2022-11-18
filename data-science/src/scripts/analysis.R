@@ -4,11 +4,8 @@ library("corrplot")
 library("broom")
 library("xlsx")
 
-dir.create("out/tables", showWarnings = FALSE)
-dir.create("out/plots", showWarnings = FALSE)
-
 dataset <- read.table(
-  "out/tables/filtered_apartments.csv",
+  "datasets/filtered_apartments.csv",
   sep = ",",
   header = TRUE,
   col.names = c(
@@ -38,12 +35,10 @@ dataset <- read.table(
   )
 )
 
-sample_n(dataset, 80) %>% write.xlsx('out/tables/data_slice.xlsx')
-
 dataset$city <- as.factor(dataset$city)
 
 build_regression_plot <- function(df, x_col, y_col) {
-  pdf(sprintf("out/plots/%s_%s_linreg.pdf", x_col, y_col))
+  pdf(sprintf("analytic/plots/%s_%s_linreg.pdf", x_col, y_col))
 
   xy_df <- data.frame(x = df[, x_col], y = df[, y_col])
   xy_df <- xy_df[order(xy_df$x), ]
@@ -61,14 +56,14 @@ write_grouping_table <- function(df, col_name) {
     group_by(df[, col_name]) %>%
     summarise(count = n()) %>%
     setNames(c(col_name, "count")) %>%
-    write.csv(sprintf("out/tables/grouped_by_%s.csv", col_name))
+    write.csv(sprintf("analytic/tables/grouped_by_%s.csv", col_name))
 }
 
 write_correlation_test <- function(df, x_col, y_col) {
   cor.test(df[, x_col], df[, y_col]) %>%
     tidy() %>%
     write.csv(sprintf(
-      "out/tables/correlation_%s_%s.csv",
+      "analytic/tables/correlation_%s_%s.csv",
       x_col,
       y_col
     ))
@@ -123,7 +118,7 @@ correlations <- function(df) {
   write_correlation_test(selected_dataset, "view_west", "total_price")
   write_correlation_test(selected_dataset, "view_yard", "total_price")
 
-  pdf("out/plots/correlation.pdf")
+  pdf("analytic/plots/correlation.pdf")
 
   cor(selected_dataset) %>%
     corrplot(

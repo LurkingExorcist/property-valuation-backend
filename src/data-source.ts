@@ -2,7 +2,16 @@ import 'reflect-metadata';
 
 import { DataSource } from 'typeorm';
 
-import { AccessRight, Apartment, City, User, ViewInWindow } from './domain';
+import {
+  AccessRight,
+  Apartment,
+  City,
+  Dataset,
+  MathModel,
+  ModelType,
+  User,
+  ViewInWindow,
+} from './domain';
 
 export const AppDataSource = new DataSource({
   type: 'postgres',
@@ -12,7 +21,16 @@ export const AppDataSource = new DataSource({
   password: process.env.PG_PASSWORD,
   database: process.env.PG_DATABASE,
   synchronize: true,
-  entities: [AccessRight, Apartment, City, User, ViewInWindow],
+  entities: [
+    AccessRight,
+    Apartment,
+    City,
+    User,
+    ViewInWindow,
+    ModelType,
+    MathModel,
+    Dataset,
+  ],
   migrations: [],
   subscribers: [],
   // logging: ['query', 'error'],

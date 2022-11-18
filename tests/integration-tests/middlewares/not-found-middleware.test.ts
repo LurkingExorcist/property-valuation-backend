@@ -5,7 +5,8 @@ import * as request from 'supertest';
 import { v4 } from 'uuid';
 
 import { App } from '@/lib/app';
-import ServerError from '@/lib/server-error/ServerError';
+
+import { ServerError } from '@/lib';
 
 console.error = jest.fn();
 

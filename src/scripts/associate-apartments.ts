@@ -5,7 +5,7 @@ import _ = require('lodash');
 
 import { AppDataSource } from '@/data-source';
 import { Apartment, ViewInWindow } from '@/domain';
-import { CsvReader } from '@/lib';
+import { CsvIO } from '@/lib';
 import { ElementType } from '@/types';
 
 const FILE_PATH = './data-science/out/tables/filtered_apartments.csv';
@@ -23,7 +23,7 @@ const VIEW_COLUMNS = [
   'view_water',
   'view_west',
   'view_yard',
-] as const;
+];
 const TABLE_COLUMNS = [
   'index',
   'city',
@@ -36,19 +36,14 @@ const TABLE_COLUMNS = [
   'is_studio',
   ...VIEW_COLUMNS,
   'total_price',
-] as const;
+];
 
 type ApartmentRecord = Record<ElementType<typeof TABLE_COLUMNS>, string>;
 
 const runAssociation = async (row: ApartmentRecord) => {
   const viewNames = _(row)
     .entries()
-    .filter(
-      ([key, value]) =>
-        VIEW_COLUMNS.includes(
-          key as unknown as ElementType<typeof VIEW_COLUMNS>
-        ) && Boolean(+value)
-    )
+    .filter(([key, value]) => VIEW_COLUMNS.includes(key) && Boolean(+value))
     .map(([key]) => key)
     .value();
 
@@ -94,7 +89,7 @@ const runAssociation = async (row: ApartmentRecord) => {
 
 const associateApartments = async () => {
   await Promise.all(
-    CsvReader.read({
+    CsvIO.read({
       filePath: FILE_PATH,
       columns: TABLE_COLUMNS,
       excludeHeader: true,

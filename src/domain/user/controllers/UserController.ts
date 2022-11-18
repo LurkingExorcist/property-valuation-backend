@@ -19,7 +19,7 @@ import { DOMAIN_ENTITY_TYPES, URLS } from '@/constants';
 import { AccessRightService, ACCESS_LEVELS } from '@/domain/access-right';
 
 import { ICrudController } from '@/interfaces';
-import { restQueryToORM } from '@/lib';
+import { DataConverter } from '@/lib';
 import { AccessMiddleware, AuthMiddleware } from '@/middlewares';
 
 import { UserService } from '../services';
@@ -58,7 +58,7 @@ export class UserController implements ICrudController {
     @Query() query?: Record<string, unknown>
   ): Promise<void> {
     await this.service
-      .find(restQueryToORM(query), { accessRights: true })
+      .find(DataConverter.restQueryToORM(query), { accessRights: true })
       .then((data) =>
         res.json({
           ...data,

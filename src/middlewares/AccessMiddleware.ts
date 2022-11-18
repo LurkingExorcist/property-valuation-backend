@@ -1,12 +1,10 @@
 import { Container, Injectable, InjectionToken } from '@decorators/di';
 import { Type } from '@decorators/di/lib/src/types';
 import { Middleware } from '@decorators/express';
-import * as express from 'express';
+import { NextFunction, Request, Response } from 'express';
 import _ = require('lodash');
 
-import UserService from '@/domain/user/User.service';
-
-import { AccessLevel, DomainEntityType } from '@/domain';
+import { AccessLevel, DomainEntityType, UserService } from '@/domain';
 import { ServerError } from '@/lib';
 
 export function AccessMiddleware(options: {
@@ -18,9 +16,9 @@ export function AccessMiddleware(options: {
     constructor(private userSevice: UserService) {}
 
     async use(
-      request: express.Request,
-      response: express.Response,
-      next: express.NextFunction
+      request: Request,
+      response: Response,
+      next: NextFunction
     ): Promise<void> {
       try {
         if (_.isNil(request.user)) {

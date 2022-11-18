@@ -28,7 +28,7 @@ describe('User.model', () => {
     const user = User.new({
       username: faker.internet.userName(),
       email: faker.internet.email(),
-      phoneNumber: faker.phone.phoneNumber('+7 (900) ###-##-##'),
+      phoneNumber: faker.phone.number('+7 (900) ###-##-##'),
       password,
       accessRights: [],
     });

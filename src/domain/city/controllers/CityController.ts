@@ -17,9 +17,8 @@ import { DOMAIN_ENTITY_TYPES, URLS } from '@/constants';
 
 import { ACCESS_LEVELS } from '@/domain/access-right';
 
-import { restQueryToORM } from '@/lib/utils';
-
 import { ICrudController } from '@/interfaces';
+import { DataConverter } from '@/lib';
 import { AccessMiddleware, AuthMiddleware } from '@/middlewares';
 
 import { CityService } from '../services';
@@ -53,7 +52,7 @@ export class CityController implements ICrudController {
     @Query() query?: Record<string, unknown>
   ): Promise<void> {
     await this.service
-      .find(restQueryToORM(query))
+      .find(DataConverter.restQueryToORM(query))
       .then((data) => res.json(data));
   }
 

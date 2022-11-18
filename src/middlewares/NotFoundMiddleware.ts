@@ -3,7 +3,7 @@ import { Middleware } from '@decorators/express';
 import * as express from 'express';
 import { StatusCodes } from 'http-status-codes';
 
-import ServerError from '@/lib/server-error/ServerError';
+import { ServerError } from '@/lib';
 
 @Injectable()
 export class NotFoundMiddleware implements Middleware {

@@ -2,10 +2,11 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 import { parse } from 'csv-parse/sync';
+import { stringify } from 'csv-stringify/sync';
 
 import { ElementType } from '@/types';
 
-export class CsvReader {
+export class CsvIO {
   static read<
     C extends readonly string[],
     T extends Record<ElementType<C>, string>
@@ -23,5 +24,14 @@ export class CsvReader {
     }
 
     return rows;
+  }
+
+  static write<T>(opts: { filePath: string; data: T[]; columns: string[] }) {
+    const resolvedPath = path.resolve(process.cwd(), opts.filePath);
+
+    fs.writeFileSync(
+      resolvedPath,
+      stringify(opts.data, { columns: opts.columns, header: true })
+    );
   }
 }

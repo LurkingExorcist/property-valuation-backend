@@ -12,6 +12,10 @@ import { City } from '@/domain/city';
 import { ViewInWindow } from '@/domain/view-in-window';
 
 import { IModel } from '@/interfaces';
+import { ElementType } from '@/types';
+
+import { DATASET_VIEW_COLUMNS } from '../constants';
+import { DatasetViewColumn } from '../types';
 
 @Entity()
 export class Apartment implements IModel {
@@ -76,5 +80,27 @@ export class Apartment implements IModel {
     entity.viewsInWindow = options.viewsInWindow;
 
     return entity;
+  }
+
+  toDatasetObject(options: { index: number }) {
+    return {
+      index: options.index,
+      city: this.city.name,
+      floor: this.floor,
+      total_area: this.totalArea,
+      living_area: this.livingArea,
+      kitchen_area: this.kitchenArea,
+      room_count: this.roomCount,
+      height: this.height,
+      is_studio: this.isStudio ? 1 : 0,
+      ...DATASET_VIEW_COLUMNS.reduce(
+        (acc, col) => ({
+          ...acc,
+          [col]: this.viewsInWindow.find((view) => view.name === col) ? 1 : 0,
+        }),
+        {} as Record<DatasetViewColumn, boolean>
+      ),
+      total_price: this.totalPrice,
+    };
   }
 }

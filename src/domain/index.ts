@@ -4,3 +4,6 @@ export * from './authentication';
 export * from './city';
 export * from './user';
 export * from './view-in-window';
+export * from './math-model';
+export * from './model-type';
+export * from './dataset';

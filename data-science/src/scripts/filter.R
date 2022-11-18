@@ -3,10 +3,10 @@ library("stringr")
 library("plyr")
 library("hash")
 
-dir.create("out/tables", showWarnings = FALSE)
+dir.create("datasets", showWarnings = FALSE)
 
 dataset <- read.table(
-  "data/apartments.csv",
+  "raw_data/apartments.csv",
   sep = ",",
   header = TRUE,
   col.names = c(
@@ -216,4 +216,4 @@ filtered_df <- insert_columns_view_types(keys(views_in_window_conditions))
 filtered_df$total_price <- total_price
 
 filtered_df %>%
-  write.csv("out/tables/filtered_apartments.csv")
+  write.csv("datasets/filtered_apartments.csv")

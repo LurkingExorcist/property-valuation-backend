@@ -1,7 +1,7 @@
 export type ElementType<T extends ReadonlyArray<unknown>> =
   T extends ReadonlyArray<infer ET> ? ET : never;
 
-export type ValueOf<T extends Record<string, unknown>> = T extends Record<
+export type ObjectValueOf<T extends Record<string, unknown>> = T extends Record<
   string,
   infer V
 >
@@ -9,3 +9,12 @@ export type ValueOf<T extends Record<string, unknown>> = T extends Record<
   : never;
 
 export type ParameterOf<T extends (...args: any[]) => any> = Parameters<T>[0];
+
+export type Primitive =
+  | string
+  | number
+  | boolean
+  | bigint
+  | symbol
+  | null
+  | undefined;

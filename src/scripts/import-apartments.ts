@@ -3,50 +3,29 @@ import 'module-alias/register';
 import * as _ from 'lodash';
 
 import { AppDataSource } from '@/data-source';
-import { Apartment, City, ViewInWindow } from '@/domain';
-import { CsvReader } from '@/lib';
+import {
+  Apartment,
+  City,
+  ViewInWindow,
+  DATASET_VIEW_COLUMNS,
+  DATASET_TABLE_COLUMNS,
+  DatasetTableColumn,
+  DatasetViewColumn,
+} from '@/domain';
+import { CsvIO } from '@/lib';
 import { ElementType } from '@/types';
 
-const FILE_PATH = './data-science/out/tables/filtered_apartments.csv';
-const VIEW_COLUMNS = [
-  'view_building',
-  'view_city',
-  'view_cottages',
-  'view_field',
-  'view_forest',
-  'view_north',
-  'view_parking',
-  'view_playground',
-  'view_school',
-  'view_street',
-  'view_water',
-  'view_west',
-  'view_yard',
-] as const;
-const TABLE_COLUMNS = [
-  'index',
-  'city',
-  'floor',
-  'total_area',
-  'living_area',
-  'kitchen_area',
-  'room_count',
-  'height',
-  'is_studio',
-  ...VIEW_COLUMNS,
-  'total_price',
-] as const;
+const FILE_PATH = './data-science/datasets/filtered_apartments.csv';
 
-type ApartmentRecord = Record<ElementType<typeof TABLE_COLUMNS>, string>;
+type ApartmentRecord = Record<DatasetTableColumn, string>;
 
 const recordToEntities = (row: ApartmentRecord) => {
   const viewNames = _(row)
     .entries()
     .filter(
       ([key, value]) =>
-        VIEW_COLUMNS.includes(
-          key as unknown as ElementType<typeof VIEW_COLUMNS>
-        ) && Boolean(+value)
+        DATASET_VIEW_COLUMNS.includes(key as DatasetViewColumn) &&
+        Boolean(+value)
     )
     .map(([key]) => key)
     .value();
@@ -73,9 +52,9 @@ const importApartments = async () => {
   console.log();
 
   try {
-    const table = CsvReader.read({
+    const table = CsvIO.read({
       filePath: FILE_PATH,
-      columns: TABLE_COLUMNS,
+      columns: DATASET_TABLE_COLUMNS,
       excludeHeader: true,
     });
 

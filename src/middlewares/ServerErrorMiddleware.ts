@@ -6,7 +6,7 @@ import { QueryFailedError } from 'typeorm';
 
 import { IS_DEBUG_MODE } from '@/constants';
 
-import ServerError from '@/lib/server-error/ServerError';
+import { ServerError } from '@/lib';
 
 @Injectable()
 export class ServerErrorMiddleware implements ErrorMiddleware {

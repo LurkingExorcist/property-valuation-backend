@@ -18,7 +18,7 @@ import { DOMAIN_ENTITY_TYPES, URLS } from '@/constants';
 import { ACCESS_LEVELS } from '@/domain/access-right';
 
 import { ICrudController } from '@/interfaces';
-import { restQueryToORM } from '@/lib';
+import { DataConverter } from '@/lib';
 import { AccessMiddleware, AuthMiddleware } from '@/middlewares';
 
 import { ViewInWindowService } from '../services';
@@ -52,7 +52,7 @@ export class ViewInWindowController implements ICrudController {
     @Query() query?: Record<string, unknown>
   ): Promise<void> {
     await this.service
-      .find(restQueryToORM(query))
+      .find(DataConverter.restQueryToORM(query))
       .then((data) => res.json(data));
   }
 

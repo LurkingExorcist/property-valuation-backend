@@ -1,17 +1,22 @@
 {
+  "ts-node": {
+    "files": true
+  },
+  "files": [
+    "src/declarations/node.d.ts",
+    "src/declarations/express.d.ts"
+  ],
   "compilerOptions": {
     "lib": [
-      "es5",
-      "es6"
+      "esnext"
     ],
-    "target": "es5",
+    "target": "esnext",
     "module": "commonjs",
     "moduleResolution": "node",
-    "rootDir": "./",
+    "rootDir": ".",
     "baseUrl": ".",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "sourceMap": true,
     "strict": true,
     "strictPropertyInitialization": false,
     "types": [
@@ -28,5 +33,7 @@
       "src/declarations"
     ],
     "noEmit": true
-  }
+  },
+  "exclude": ["data-science"],
+  "include": ["src", "tests"],
 }

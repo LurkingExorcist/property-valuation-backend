@@ -5,14 +5,17 @@ import helmet from 'helmet';
 
 import { PORT } from '@/constants';
 
-import ApartmentController from '@/domain/apartments/Apartment.controller';
-import AuthenticationController from '@/domain/authentication/Authentication.controller';
-import CityController from '@/domain/city/controllers/City.controller';
-import UserController from '@/domain/user/User.controller';
-import ViewInWindowController from '@/domain/view-in-window/ViewInWindow.controller';
-
-import NotFoundMiddleware from '@/middlewares/NotFoundMiddleware';
-import ServerErrorMiddleware from '@/middlewares/ServerErrorMiddleware';
+import {
+  ApartmentController,
+  AuthenticationController,
+  CityController,
+  DatasetController,
+  MathModelController,
+  ModelTypeController,
+  UserController,
+  ViewInWindowController,
+} from '@/domain';
+import { NotFoundMiddleware, ServerErrorMiddleware } from '@/middlewares';
 
 export class App {
   private app: express.Express;
@@ -47,6 +50,9 @@ export class App {
       CityController,
       UserController,
       ViewInWindowController,
+      MathModelController,
+      ModelTypeController,
+      DatasetController,
     ]);
 
     this.app.use(middlewareHandler(NotFoundMiddleware));
