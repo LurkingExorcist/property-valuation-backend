@@ -1,3 +1,4 @@
+import _ = require('lodash');
 import {
   Column,
   Entity,
@@ -15,12 +16,15 @@ import { IModel } from '@/interfaces';
 import { ElementType } from '@/types';
 
 import { DATASET_VIEW_COLUMNS } from '../constants';
-import { DatasetViewColumn } from '../types';
+import { DatasetTableColumn, DatasetViewColumn } from '../types';
 
 @Entity()
 export class Apartment implements IModel {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @Column('text')
+  source: string;
 
   @ManyToOne(() => City)
   city: City;
@@ -54,6 +58,7 @@ export class Apartment implements IModel {
   viewsInWindow: ViewInWindow[];
 
   static new(options: {
+    source: string;
     city: City;
     floor: number;
     totalArea: number;
@@ -68,6 +73,7 @@ export class Apartment implements IModel {
     const entity = new Apartment();
 
     entity.id = v4();
+    entity.source = options.source;
     entity.city = options.city;
     entity.floor = options.floor;
     entity.totalArea = options.totalArea;
@@ -80,6 +86,40 @@ export class Apartment implements IModel {
     entity.viewsInWindow = options.viewsInWindow;
 
     return entity;
+  }
+
+  static fromDatasetObject({
+    source,
+    record,
+  }: {
+    source: string;
+    record: Record<DatasetTableColumn, string>;
+  }) {
+    const viewNames = _(record)
+      .entries()
+      .filter(
+        ([key, value]) =>
+          DATASET_VIEW_COLUMNS.includes(key as DatasetViewColumn) &&
+          Boolean(+value)
+      )
+      .map(([key]) => key)
+      .value();
+
+    const apartment = Apartment.new({
+      source,
+      city: City.new({ name: record.city }),
+      floor: Number(record.floor),
+      totalArea: Number(record.total_area),
+      livingArea: Number(record.living_area),
+      kitchenArea: Number(record.kitchen_area),
+      roomCount: Number(record.room_count),
+      height: Number(record.height),
+      isStudio: Boolean(+record.is_studio),
+      totalPrice: Math.floor(Number(record.total_price)),
+      viewsInWindow: viewNames.map((name) => ViewInWindow.new({ name })),
+    });
+
+    return apartment;
   }
 
   toDatasetObject(options: { index: number }) {

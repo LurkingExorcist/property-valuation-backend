@@ -1,22 +1,16 @@
 import { FindOptionsOrder, FindOptionsWhere } from 'typeorm';
 
-import { Primitive } from './utility';
+import { FILTER_OPERATORS } from '@/constants';
 
-export declare type SortDirection = 'asc' | 'desc' | undefined;
+import { ObjectValueOf, Primitive } from './utility';
+
+export type SortDirection = 'asc' | 'desc' | undefined;
 export type SortItem = {
   field: string;
   sort: SortDirection;
 };
 
-export enum FilterOperator {
-  CONTAINS = 'contains',
-  EQUALS = 'equals',
-  STARTS_WITH = 'startsWith',
-  ENDS_WITH = 'endsWith',
-  IS_EMPTY = 'isEmpty',
-  IS_NOT_EMPTY = 'isNotEmpty',
-  IS_ANY_OF = 'isAnyOf',
-}
+export type FilterOperator = ObjectValueOf<typeof FILTER_OPERATORS>;
 
 export type FilterOperation = [FilterOperator, Primitive | Primitive[]];
 

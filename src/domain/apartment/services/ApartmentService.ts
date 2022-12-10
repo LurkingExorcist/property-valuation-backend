@@ -1,6 +1,6 @@
 import { Injectable } from '@decorators/di';
 import _ = require('lodash');
-import { FindOptionsRelations } from 'typeorm';
+import { FindOptionsRelations, FindOptionsWhere } from 'typeorm';
 
 import { DOMAIN_ENTITY_TYPES } from '@/constants';
 
@@ -87,5 +87,21 @@ export class ApartmentService implements ICrudService<Apartment> {
 
   async remove(query: { id: string }): Promise<void> {
     await AppDataSource.manager.delete(Apartment, query);
+  }
+
+  async batchRemove(
+    query: FindOptionsWhere<Apartment>,
+    relations?: FindOptionsRelations<Apartment>
+  ): Promise<void> {
+    await AppDataSource.manager
+      .find(Apartment, {
+        relations,
+        where: query,
+      })
+      .then((apartments) =>
+        Promise.all(
+          apartments.map((apartment) => AppDataSource.manager.remove(apartment))
+        )
+      );
   }
 }

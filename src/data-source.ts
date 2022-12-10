@@ -33,5 +33,5 @@ export const AppDataSource = new DataSource({
   ],
   migrations: [],
   subscribers: [],
-  // logging: ['query', 'error'],
+  //logging: ['query', 'error'],
 });

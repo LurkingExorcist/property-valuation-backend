@@ -8,7 +8,14 @@ import {
   FindOptionsOrder,
   FindOptionsWhere,
   FindOperator,
+  LessThan,
+  LessThanOrEqual,
+  MoreThan,
+  MoreThanOrEqual,
+  Between,
 } from 'typeorm';
+
+import { FILTER_OPERATORS } from '@/constants';
 
 import {
   ElementType,
@@ -77,23 +84,54 @@ export class DataConverter {
               key,
               _.cond<FilterOperator, FindOperator<T>>([
                 [
-                  equals(FilterOperator.CONTAINS),
+                  equals(FILTER_OPERATORS.EQUALS),
+                  () => Equal(value?.toString()),
+                ],
+                [
+                  equals(FILTER_OPERATORS.LIKE),
                   () => ILike(`%${value?.toString()}%`),
                 ],
-                [equals(FilterOperator.EQUALS), () => Equal(value?.toString())],
                 [
-                  equals(FilterOperator.STARTS_WITH),
-                  () => ILike(`${value?.toString()}%`),
+                  equals(FILTER_OPERATORS.LESS_THAN),
+                  () => LessThan(value?.toString()),
                 ],
                 [
-                  equals(FilterOperator.ENDS_WITH),
-                  () => ILike(`%${value?.toString()}`),
+                  equals(FILTER_OPERATORS.LESS_THAN_EQUAL),
+                  () => LessThanOrEqual(value?.toString()),
                 ],
-                [equals(FilterOperator.IS_EMPTY), () => IsNull()],
-                [equals(FilterOperator.IS_NOT_EMPTY), () => Not(IsNull())],
                 [
-                  equals(FilterOperator.IS_ANY_OF),
-                  () => In(value as Primitive[]),
+                  equals(FILTER_OPERATORS.MORE_THEN),
+                  () => MoreThan(value?.toString()),
+                ],
+                [
+                  equals(FILTER_OPERATORS.MORE_THEN_EQUAL),
+                  () => MoreThanOrEqual(value?.toString()),
+                ],
+                [equals(FILTER_OPERATORS.IS_EMPTY), () => IsNull()],
+                [equals(FILTER_OPERATORS.IS_NOT_EMPTY), () => Not(IsNull())],
+                [
+                  equals(FILTER_OPERATORS.IS_ANY_OF),
+                  () => {
+                    if (!_.isArray(value)) {
+                      throw ServerError.badRequest({
+                        message: 'Значение должно быть массивом',
+                      });
+                    }
+
+                    return In(value);
+                  },
+                ],
+                [
+                  equals(FILTER_OPERATORS.BETWEEN),
+                  () => {
+                    if (!_.isArray(value)) {
+                      throw ServerError.badRequest({
+                        message: 'Значение должно быть массивом',
+                      });
+                    }
+
+                    return Between(value[0], value[1]);
+                  },
                 ],
                 [
                   _.stubTrue,

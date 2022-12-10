@@ -8,6 +8,7 @@ import {
   Post,
   Put,
   Query,
+  Request,
   Response,
 } from '@decorators/express';
 import * as express from 'express';
@@ -21,9 +22,13 @@ import { CityService } from '@/domain/city';
 import { ViewInWindowService } from '@/domain/view-in-window';
 
 import { ICrudController } from '@/interfaces';
-import { DataConverter } from '@/lib';
-import { AccessMiddleware, AuthMiddleware } from '@/middlewares';
-import { RestFindQuery } from '@/types';
+import { DataConverter, Importer, ServerError } from '@/lib';
+import {
+  AccessMiddleware,
+  AuthMiddleware,
+  UploadMiddleware,
+} from '@/middlewares';
+import { RestFindQuery, Where } from '@/types';
 
 import { Apartment } from '../models';
 import { ApartmentService } from '../services';
@@ -80,6 +85,7 @@ export class ApartmentController implements ICrudController {
     @Response() res: express.Response,
     @Body()
     data: {
+      source: string;
       cityId: string;
       viewsInWindowIds: string[];
       floor: number;
@@ -107,6 +113,36 @@ export class ApartmentController implements ICrudController {
         { city: true, viewsInWindow: true }
       )
       .then((data) => res.json(data));
+  }
+
+  @Post('/import', [
+    AccessMiddleware({
+      domainEntity: DOMAIN_ENTITY_TYPES.APARTMENT,
+      accessLevel: ACCESS_LEVELS.WRITE,
+    }),
+    UploadMiddleware({
+      fieldName: 'file',
+    }),
+  ])
+  async import(
+    @Request() req: express.Request,
+    @Response() res: express.Response,
+    @Body()
+    data: {
+      source: string;
+    }
+  ): Promise<void> {
+    if (!req.file)
+      throw ServerError.badRequest({
+        message: 'Необходимо приложить файл датасета',
+      });
+
+    await Importer.importApartments({
+      source: data.source,
+      filePath: req.file.path,
+    });
+
+    res.sendStatus(200);
   }
 
   @Put('/:id', [
@@ -168,6 +204,24 @@ export class ApartmentController implements ICrudController {
     @Params('id') id: string
   ): Promise<void> {
     await this.service.remove({ id });
+
+    res.sendStatus(StatusCodes.OK);
+  }
+
+  @Delete('/', [
+    AccessMiddleware({
+      domainEntity: DOMAIN_ENTITY_TYPES.APARTMENT,
+      accessLevel: ACCESS_LEVELS.WRITE,
+    }),
+  ])
+  async batchRemove(
+    @Response() res: express.Response,
+    @Query() query?: Where<Apartment>
+  ): Promise<void> {
+    await this.service.batchRemove(
+      DataConverter.whereToFindOptions(query || {}),
+      { city: true }
+    );
 
     res.sendStatus(StatusCodes.OK);
   }

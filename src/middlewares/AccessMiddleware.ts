@@ -4,7 +4,9 @@ import { Middleware } from '@decorators/express';
 import { NextFunction, Request, Response } from 'express';
 import _ = require('lodash');
 
-import { AccessLevel, DomainEntityType, UserService } from '@/domain';
+import { UserService } from '@/domain/user/services';
+
+import { AccessLevel, DomainEntityType } from '@/domain';
 import { ServerError } from '@/lib';
 
 export function AccessMiddleware(options: {

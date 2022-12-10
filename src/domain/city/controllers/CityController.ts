@@ -20,7 +20,9 @@ import { ACCESS_LEVELS } from '@/domain/access-right';
 import { ICrudController } from '@/interfaces';
 import { DataConverter } from '@/lib';
 import { AccessMiddleware, AuthMiddleware } from '@/middlewares';
+import { Where } from '@/types';
 
+import { City } from '../models';
 import { CityService } from '../services';
 
 @Controller(URLS.CITIES, [AuthMiddleware])
@@ -115,6 +117,23 @@ export class CityController implements ICrudController {
     @Params('id') id: string
   ): Promise<void> {
     await this.service.remove({ id });
+
+    res.sendStatus(StatusCodes.OK);
+  }
+
+  @Delete('/', [
+    AccessMiddleware({
+      domainEntity: DOMAIN_ENTITY_TYPES.APARTMENT,
+      accessLevel: ACCESS_LEVELS.WRITE,
+    }),
+  ])
+  async batchRemove(
+    @Response() res: express.Response,
+    @Query() query?: Where<City>
+  ): Promise<void> {
+    await this.service.batchRemove(
+      DataConverter.whereToFindOptions(query || {})
+    );
 
     res.sendStatus(StatusCodes.OK);
   }
