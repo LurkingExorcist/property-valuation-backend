@@ -105,8 +105,8 @@ export class UserService implements ICrudService<User> {
         relations,
         where: query,
       })
-      .then((cities) =>
-        Promise.all(cities.map((city) => AppDataSource.manager.remove(city)))
+      .then((users) =>
+        Promise.all(users.map((user) => AppDataSource.manager.remove(user)))
       );
   }
 }

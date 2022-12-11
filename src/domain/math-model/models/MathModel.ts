@@ -29,12 +29,7 @@ export class MathModel {
   @Column('timestamp', { nullable: true })
   trainedDate: Date | null;
 
-  static new(options: {
-    name: string;
-    datasetPath: string;
-    modelType: ModelType;
-    formula: string;
-  }) {
+  static new(options: { name: string; modelType: ModelType; formula: string }) {
     const entity = new MathModel();
 
     entity.id = v4();

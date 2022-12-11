@@ -26,6 +26,7 @@ import { DataConverter, DataScienceAPI } from '@/lib';
 import { AccessMiddleware, AuthMiddleware } from '@/middlewares';
 import { Where } from '@/types';
 
+import { MathModel } from '../models';
 import { MathModelService } from '../services';
 
 @Controller(URLS.MATH_MODELS, [AuthMiddleware])
@@ -61,7 +62,10 @@ export class MathModelController implements ICrudController {
     @Query() query?: Record<string, unknown>
   ): Promise<void> {
     await this.service
-      .find(DataConverter.restQueryToORM(query))
+      .find(DataConverter.restQueryToORM(query), {
+        modelType: true,
+        trainDataset: true,
+      })
       .then((data) => res.json(data));
   }
 
@@ -76,7 +80,6 @@ export class MathModelController implements ICrudController {
     @Body()
     data: {
       name: string;
-      datasetPath: string;
       modelTypeId: string;
       formula: string;
     }
@@ -88,7 +91,6 @@ export class MathModelController implements ICrudController {
     await this.service
       .create({
         name: data.name,
-        datasetPath: data.datasetPath,
         formula: data.formula,
         modelType,
       })
@@ -138,6 +140,23 @@ export class MathModelController implements ICrudController {
     @Params('id') id: string
   ): Promise<void> {
     await this.service.remove({ id });
+
+    res.sendStatus(StatusCodes.OK);
+  }
+
+  @Delete('/', [
+    AccessMiddleware({
+      domainEntity: DOMAIN_ENTITY_TYPES.MATH_MODEL,
+      accessLevel: ACCESS_LEVELS.WRITE,
+    }),
+  ])
+  async batchRemove(
+    @Response() res: express.Response,
+    @Query() query?: Where<MathModel>
+  ): Promise<void> {
+    await this.service.batchRemove(
+      DataConverter.whereToFindOptions(query || {})
+    );
 
     res.sendStatus(StatusCodes.OK);
   }
