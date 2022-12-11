@@ -1,6 +1,6 @@
 import { Injectable } from '@decorators/di';
 import _ = require('lodash');
-import { FindOptionsRelations } from 'typeorm';
+import { FindOptionsRelations, FindOptionsWhere } from 'typeorm';
 
 import { DOMAIN_ENTITY_TYPES } from '@/constants';
 
@@ -67,5 +67,23 @@ export class ViewInWindowService implements ICrudService<ViewInWindow> {
 
   async remove(query: { id: string }): Promise<void> {
     await AppDataSource.manager.delete(ViewInWindow, query);
+  }
+
+  async batchRemove(
+    query: FindOptionsWhere<ViewInWindow>,
+    relations?: FindOptionsRelations<ViewInWindow>
+  ): Promise<void> {
+    await AppDataSource.manager
+      .find(ViewInWindow, {
+        relations,
+        where: query,
+      })
+      .then((viewsInWindow) =>
+        Promise.all(
+          viewsInWindow.map((viewInWindow) =>
+            AppDataSource.manager.remove(viewInWindow)
+          )
+        )
+      );
   }
 }
