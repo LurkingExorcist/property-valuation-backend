@@ -29,6 +29,7 @@ import { AccessMiddleware, AuthMiddleware } from '@/middlewares';
 import { Where } from '@/types';
 
 import { DATASET_DIR } from '../constants';
+import { Dataset } from '../models';
 import { DatasetService } from '../services';
 
 @Controller(URLS.DATASETS, [AuthMiddleware])
@@ -173,6 +174,23 @@ export class DatasetController implements ICrudController {
     @Params('id') id: string
   ): Promise<void> {
     await this.service.remove({ id });
+
+    res.sendStatus(StatusCodes.OK);
+  }
+
+  @Delete('/', [
+    AccessMiddleware({
+      domainEntity: DOMAIN_ENTITY_TYPES.DATASET,
+      accessLevel: ACCESS_LEVELS.WRITE,
+    }),
+  ])
+  async batchRemove(
+    @Response() res: express.Response,
+    @Query() query?: Where<Dataset>
+  ): Promise<void> {
+    await this.service.batchRemove(
+      DataConverter.whereToFindOptions(query || {})
+    );
 
     res.sendStatus(StatusCodes.OK);
   }
