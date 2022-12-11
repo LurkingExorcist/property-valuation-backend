@@ -123,7 +123,7 @@ export class ViewInWindowController implements ICrudController {
 
   @Delete('/', [
     AccessMiddleware({
-      domainEntity: DOMAIN_ENTITY_TYPES.APARTMENT,
+      domainEntity: DOMAIN_ENTITY_TYPES.VIEW_IN_WINDOW,
       accessLevel: ACCESS_LEVELS.WRITE,
     }),
   ])

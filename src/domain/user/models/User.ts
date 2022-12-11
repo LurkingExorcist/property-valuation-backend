@@ -49,9 +49,13 @@ export class User implements IModel {
     entity.email = options.email;
     entity.phoneNumber = options.phoneNumber;
     entity.accessRights = options.accessRights;
-    entity.passwordHash = hashSync(options.password, SALT_ROUNDS);
+    entity.passwordHash = User.hashPassword(options.password);
 
     return entity;
+  }
+
+  static hashPassword(password: string) {
+    return hashSync(password, SALT_ROUNDS);
   }
 
   checkPassword(password: string) {

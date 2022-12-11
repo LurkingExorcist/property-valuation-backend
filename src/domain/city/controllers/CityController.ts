@@ -123,7 +123,7 @@ export class CityController implements ICrudController {
 
   @Delete('/', [
     AccessMiddleware({
-      domainEntity: DOMAIN_ENTITY_TYPES.APARTMENT,
+      domainEntity: DOMAIN_ENTITY_TYPES.CITY,
       accessLevel: ACCESS_LEVELS.WRITE,
     }),
   ])

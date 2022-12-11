@@ -6,6 +6,7 @@ import helmet from 'helmet';
 import { PORT } from '@/constants';
 
 import {
+  AccessRightController,
   ApartmentController,
   AuthenticationController,
   CityController,
@@ -45,6 +46,7 @@ export class App {
     this.app.use(helmet());
 
     attachControllers(this.app, [
+      AccessRightController,
       ApartmentController,
       AuthenticationController,
       CityController,

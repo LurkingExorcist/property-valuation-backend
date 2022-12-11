@@ -1,6 +1,6 @@
 import { Injectable } from '@decorators/di';
 import _ = require('lodash');
-import { FindOptionsRelations } from 'typeorm';
+import { FindOptionsRelations, FindOptionsWhere } from 'typeorm';
 
 import { DOMAIN_ENTITY_TYPES } from '@/constants';
 
@@ -52,11 +52,20 @@ export class UserService implements ICrudService<User> {
 
   async update(
     query: { id: string },
-    data: Omit<Partial<User>, 'id'>,
+    data: Partial<ParameterOf<typeof User['new']>>,
     relations?: FindOptionsRelations<User>
   ): Promise<User> {
     const { accessRights } = data;
-    const omitedData = _.omit(data, 'accessRights');
+    const omitedData = _.omit(
+      {
+        ...data,
+        passwordHash: data.password
+          ? User.hashPassword(data.password)
+          : undefined,
+      },
+      'accessRights',
+      'password'
+    );
 
     if (!_.isNil(accessRights)) {
       const user = await this.findById({ id: query.id }, relations);
@@ -85,5 +94,19 @@ export class UserService implements ICrudService<User> {
 
   async remove(query: { id: string }): Promise<void> {
     await AppDataSource.manager.delete(User, query);
+  }
+
+  async batchRemove(
+    query: FindOptionsWhere<User>,
+    relations?: FindOptionsRelations<User>
+  ): Promise<void> {
+    await AppDataSource.manager
+      .find(User, {
+        relations,
+        where: query,
+      })
+      .then((cities) =>
+        Promise.all(cities.map((city) => AppDataSource.manager.remove(city)))
+      );
   }
 }
