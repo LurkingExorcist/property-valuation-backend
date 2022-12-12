@@ -113,17 +113,6 @@ app$add_post(
       .res$set_body(
         predicted_result
       )
-    }, warning = function(warn) {
-      print(warn)
-
-      .res$set_status_code(400L)
-      .res$set_content_type("application/json")
-      .res$set_body(
-        list(
-          status = 400,
-          message = warn$message
-        )
-      )
     }, error = function(err) {
       print(err)
 

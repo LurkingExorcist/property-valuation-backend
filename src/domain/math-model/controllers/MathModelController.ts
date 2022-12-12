@@ -175,7 +175,7 @@ export class MathModelController implements ICrudController {
       datasetId: string;
     }
   ): Promise<void> {
-    const mathModel = await this.service.findById({ id });
+    const mathModel = await this.service.findById({ id }, { modelType: true });
 
     const trainDataset = await this.datasetService.findById({
       id: data.datasetId,
